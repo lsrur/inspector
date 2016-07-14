@@ -2,6 +2,7 @@
     "name": "lsrur/inspector",
     "description": "Laravel Inspector, advanced debugging tools for Laravel",
     "license": "MIT",
+    "minimum-stability": "stable",
      "keywords": [
         "laravel", "debug", "profiler"
     ],
