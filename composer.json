@@ -8,7 +8,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Inspector\\": "src/"
+            "Lsrur\\Inspector\\": "src/"
         }
     },
     "require": {}
