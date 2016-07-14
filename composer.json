@@ -1,0 +1,9 @@
+{
+    "name": "lsrur/inspector",
+    "description": "Laravel Inspector, advanced debugging tools for Laravel",
+    "license": "MIT",
+     "keywords": [
+        "laravel", "debug", "profiler"
+    ],
+    "require": {}
+}
