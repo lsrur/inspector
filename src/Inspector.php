@@ -38,6 +38,7 @@ class Inspector
 
     private function renderScript($debugInfo)
     {
+
         return preg_replace('~[\r\n]+~', '', view('inspector::debugscript', $debugInfo));
     }
 
@@ -45,6 +46,7 @@ class Inspector
     {
         $debugInfo = [
             'viewData'   =>  [],
+            'allocRam'   => $this->getAllocatedRAM(),
             'isScript'   => false,
             'isRedirect' => false,
             'data'       => $this->data,
@@ -113,7 +115,7 @@ class Inspector
         }
     }
 
-    private function add($p1, $p2, $style)
+    private function add($p1, $p2, $style, $steps = 3)
     {
 
         $name = null;
@@ -129,7 +131,7 @@ class Inspector
         } else {
             $value = "'$value'";
         }
-        $name .= $this->getTrace(3);
+        $name .= $this->getTrace($steps);
         $this->data[] = ['name'=>$name,'value'=>$value, 'style'=>$style];
   
     }
@@ -169,8 +171,11 @@ class Inspector
 
     private function getTrace($steps = 2)
     {
+        if(!isset(debug_backtrace()[$steps]['file'])) $steps--;
+    
         $file = collect(explode('/', debug_backtrace()[$steps]['file']))->last();
         return " [".$file." #".debug_backtrace()[$steps]['line']."]";
+    
     }
 
     public function table($p1, $p2=null)
@@ -194,7 +199,6 @@ class Inspector
             $this->data[] = ['style'=>'endgroup'];
          } else {
             $this->log($name." (cannot build table)", $values) ;
-
          }            
     }
 

@@ -1,7 +1,7 @@
 <?php $groupCount=0; $payloadSize=0;
 
 ?>
- 	console.groupCollapsed('LARAVEL INSPECTOR {!!$title!!}, RAM:{{\Inspector::getAllocatedRAM()}}, TIME:{{round((microtime(true)-LARAVEL_START)*1000,2)}}ms');
+ 	console.groupCollapsed('LARAVEL INSPECTOR {!!$title!!}, RAM:{{$allocRam}}, TIME:{{round((microtime(true)-LARAVEL_START)*1000,2)}}ms');
  	@if(isset($payload))
  		<?php 
  		$payLog = '';
