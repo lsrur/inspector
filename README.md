@@ -18,9 +18,15 @@ And this Facade in the same configuration file:
 	'Inspector' => Lsrur\Inspector\Facade\Inspector::class,
 	
 	
+
+
+
+## Example
+
+![MacDown Screenshot](https://s31.postimg.org/vlfgyr21n/002.png)
   
 ## Usage
-    
+
 
 ### Inspecting Objects and Variables
 	
