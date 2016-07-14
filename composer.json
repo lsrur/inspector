@@ -6,5 +6,10 @@
      "keywords": [
         "laravel", "debug", "profiler"
     ],
+    "autoload": {
+        "psr-4": {
+            "Inspector\\": "src/"
+        }
+    },
     "require": {}
 }
