@@ -31,7 +31,10 @@ class InspectorServiceProvider extends ServiceProvider
         //Register Middleware
         $kernel = $this->app->make('Illuminate\Contracts\Http\Kernel');
         $kernel->pushMiddleware('Lsrur\Inspector\Middleware\Inspector');
-
+        $this->publishes([
+            __DIR__.'/config/inspector.php' => base_path('config')
+            ]);
+        
         $this->mergeConfigFrom(__DIR__.'/config/inspector.php', 'inspector'); 
 
     }

@@ -10,6 +10,7 @@ class Inspector
     private $data = [];
     private $sql = [];
     private $exception = null;
+    private $isOn = true;
 
     private function getSize($size, $precision = 2) {
         $units = array('Bytes','kB','MB','GB','TB','PB','EB','ZB','YB');
@@ -20,6 +21,11 @@ class Inspector
             $i++;
         }
         return round($size, $precision).$units[$i];
+    }
+
+    public function turnOff()
+    {
+        $this->isOn = false;
     }
 
     public function addException($e)
@@ -44,6 +50,8 @@ class Inspector
 
     public function injectScript(Request $request, Response $response)
     {
+        if(!$this->isOn) return;
+
         $debugInfo = [
             'viewData'   =>  [],
             'allocRam'   => $this->getAllocatedRAM(),
@@ -53,8 +61,8 @@ class Inspector
             'exception'  => $this->exception, 
             'sql'        => $this->sql
         ];
-
-        if($this->isJsonRequest($request))
+    
+        if($this->isJsonRequest($request) || $response->headers->get('content-type') == "application/json")
         {
             $content = json_decode($response->getContent()) ?: [];
             $debugInfo['title'] = $request->getMethod().':'.request()->url(). ' STATUS:'.$response->status();
@@ -72,18 +80,17 @@ class Inspector
                 $request->session()->flash('_DEBUG', $script);
         
             } else {
+
                 if(isset($this->exception))
-                {
-                    
+                {  
                     $debugInfo['title']    = 'EXCEPTION '.get_class($this->exception);
                     $debugInfo['isScript'] = true;
                     $script = $this->renderScript($debugInfo);
-
-                    $content = str_replace('</body>', $script, $response->getContent());
-                    
+                    $content = str_replace('</body>', $script, $response->getContent());   
                     $response->setContent($content);
-                } elseif(is_object($response->getOriginalContent())) {
-                    
+                } elseif(gettype($response->getOriginalContent())=="object" && get_class($response->getOriginalContent()) == 'Illuminate\View\View')
+                {
+                    // View response
                     $debugInfo['viewData'] = $response->getOriginalContent()->getData();
                     $debugInfo['title']    = 'VIEW:'.$response->getOriginalContent()->getName();
                     $debugInfo['isScript'] = true;
@@ -96,16 +103,16 @@ class Inspector
                     
                     $response->setContent($content);
                 } else {
-                    
+                    // type Response
                     $debugInfo['title']    = '(STRING RETURN)';
                     $debugInfo['isScript'] = true;
                     $script = $this->renderScript($debugInfo);
 
                     if($request->session()->has('_DEBUG'))
                         $script = $request->session()->get('_DEBUG').$script;
-
-                    $content = $response->getContent().$script;
-                    
+        
+                    $content = '<body>'.$response->getContent().$script;
+                
                     $response->setContent($content);                    
                 }
          
