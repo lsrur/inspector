@@ -26,7 +26,7 @@ And this Facade in the same configuration file:
 ![MacDown Screenshot](https://s31.postimg.org/vlfgyr21n/002.png)
   
 ## Usage
-
+Laravel inspector will be active only if enviroment variable APP_DEBUG is true
 
 ### Inspecting Objects and Variables
 	
@@ -58,9 +58,19 @@ In addition to the ability to group information, each group excecution time will
 Each response will include information of:
 
 * Database queries, including param bindings and excecution time
+* Exceptions*
 * Complete request information
 * Data passed to views (in view responses)
 * Previous inspections (in redirect responses)
 * Session information
-* Total allocated RAM and script excecution time
+* Total allocated RAM and total script excecution time
 * Configurable $_SERVER dump 
+
+*In order to show exceptions you should add the following line under the "render" method of app/Exceptions/Handler.php
+
+    
+    public function render($request, Exception $e)
+    {
+        Inspector::addException($e); 	// <- THIS LINE
+        return parent::render($request, $e);
+    }  
