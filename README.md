@@ -1,4 +1,4 @@
-# Laravel Inspector
+# Laravel Zoo Inspector
 Laravel 5.x package to inspect, debug and profile many aspects of your server side code using your browser's console.
 
 Laravel Inspector can collect information of your objects, variables, database queries, request data, views, session, etc. and will automatically output it to yours browsers console,	whatever your code returns views or ajax responses.
@@ -21,12 +21,15 @@ And this Facade in the same configuration file:
 
 
 
-## Example
+## Sample Screenshot
 
 ![MacDown Screenshot](https://s31.postimg.org/vlfgyr21n/002.png)
   
 ## Usage
-Laravel inspector will be active only if enviroment variable APP_DEBUG is true
+Laravel inspector will be activated if enviroment variable APP_DEBUG is true.  
+You can turn it off temporarily (for the current request) with the following command:
+
+	Inspector::turnOff();
 
 ### Inspecting Objects and Variables
 	
@@ -54,7 +57,7 @@ Laravel inspector will be active only if enviroment variable APP_DEBUG is true
 		
 In addition to the ability to group information, each group excecution time will be measured and shown.
 
-### Additional Information
+### Additional Information 
 Each response will include information of:
 
 * Database queries, including param bindings and excecution time
@@ -71,6 +74,10 @@ Each response will include information of:
     
     public function render($request, Exception $e)
     {
-        Inspector::addException($e); 	// <- THIS LINE
+        \Inspector::addException($e); 	// <- THIS LINE
         return parent::render($request, $e);
     }  
+    
+    
+## License
+Laravel Zoo Inspector is licensed under the MIT License.

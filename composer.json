@@ -1,6 +1,6 @@
 {
     "name": "lsrur/inspector",
-    "description": "Laravel Inspector, advanced debugging tools for Laravel",
+    "description": "Laravel Zoo Inspector, debugging tools for Laravel",
     "license": "MIT",
     "minimum-stability": "stable",
      "keywords": [
@@ -9,7 +9,10 @@
     "autoload": {
         "psr-4": {
             "Lsrur\\Inspector\\": "src/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "require": {}
 }
