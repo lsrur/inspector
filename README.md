@@ -1,7 +1,13 @@
 # Laravel Zoo Inspector
 Laravel 5.x package to inspect, debug and profile many aspects of your server side code using your browser's console.
 
-Laravel Inspector can collect information of your objects, variables, database queries, request data, views, session, etc. and will automatically output it to yours browsers console,	whatever your code returns views or ajax responses.
+Laravel Inspector collects information of your objects, variables, database queries, request data, views, session, etc. and automatically sends it to yours browsers console, whatever your code returns views or ajax responses.
+
+### Prerequisities
+The package was developed using PHP 7 so there may be incompatibilities with PHP 5.
+
+* PHP 7.x
+* Laravel 5.x
 
 ### Installation
 	composer require lsrur/inspector
@@ -17,8 +23,9 @@ And this Facade in the same configuration file:
 
 	'Inspector' => Lsrur\Inspector\Facade\Inspector::class,
 	
+Finally pubhlish the configuration file:
 	
-
+	php artisan vendor:publish
 
 
 ## Sample Screenshot
@@ -26,10 +33,16 @@ And this Facade in the same configuration file:
 ![MacDown Screenshot](https://s31.postimg.org/vlfgyr21n/002.png)
   
 ## Usage
-Laravel inspector will be activated if enviroment variable APP_DEBUG is true.  
-You can turn it off temporarily (for the current request) with the following command:
+Laravel inspector will only be active if the enviroment variable APP_DEBUG is true.  
+You can turn it off temporarily (just for the current request) with the following command:
 
 	Inspector::turnOff();
+
+By default, Inspector returns a Javascript to render the output on the browser console. If you want to force the output to JSON format for the current request, use the following:
+
+	Inspector::toJson();
+	
+If you want to force the output to JSON format for all requests, edit the configuration variable `force_json_output` in the file `config/inspector.php`	
 
 ### Inspecting Objects and Variables
 ```php	
