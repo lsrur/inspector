@@ -81,13 +81,13 @@
     	console.log('URL: {{request()->url()}}');
         console.log('ROUTE: {!!request()->route()->getPath().' ('.request()->route()->getName().') -> '.request()->route()->getActionName()!!}');
         console.log('INPUT:',{!!json_encode(request()->all())!!});
-    	console.log('HEADER:',  {!! json_encode(request()->header())!!});
+    	console.log('HEADERS:',  {!! json_encode(request()->header())!!});
 
         console.groupEnd();
     @endif
 
 	console.groupCollapsed('SERVER');
-    console.log({!!json_encode(collect($_SERVER)->except(config('debug.hide_server_keys')))!!});
+    console.log({!!json_encode(collect($_SERVER)->except(config('inspector.hide_server_keys')))!!});
     console.groupEnd();    
 
     console.groupCollapsed('SESSION');

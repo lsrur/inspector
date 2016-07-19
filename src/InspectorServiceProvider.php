@@ -27,13 +27,13 @@ class InspectorServiceProvider extends ServiceProvider
             // The package views have not been published. Use the defaults.
             $this->loadViewsFrom(__DIR__.'/views', 'inspector');
         }
-
-        //Register Middleware
+    
         $kernel = $this->app->make('Illuminate\Contracts\Http\Kernel');
         $kernel->pushMiddleware('Lsrur\Inspector\Middleware\Inspector');
-        $this->publishes([
-            __DIR__.'/config/inspector.php' => base_path('config')
-            ]);
+ 
+         $this->publishes([
+            __DIR__.'/config/inspector.php' => config_path('inspector.php')], 'config');
+
         
         $this->mergeConfigFrom(__DIR__.'/config/inspector.php', 'inspector'); 
 

@@ -11,6 +11,8 @@ class Inspector
     private $sql = [];
     private $exception = null;
     private $isOn = true;
+    private $outputType = 'script';
+
 
     private function getSize($size, $precision = 2) {
         $units = array('Bytes','kB','MB','GB','TB','PB','EB','ZB','YB');
@@ -44,8 +46,14 @@ class Inspector
 
     private function renderScript($debugInfo)
     {
+        if($this->outputType == 'json' || (\Config::get('inspector.force_json_output')))
+        {
+            return $this->renderJson();
 
-        return preg_replace('~[\r\n]+~', '', view('inspector::debugscript', $debugInfo));
+        } else {
+            return preg_replace('~[\r\n]+~', '', view('inspector::debugscript', $debugInfo));
+
+        }
     }
 
     public function injectScript(Request $request, Response $response)
@@ -246,4 +254,69 @@ class Inspector
         return ((float)$usec + (float)$sec);
     }
 
+    public function toJson()
+    {
+        $this->outputType ='json';
+
+    }
+
+    /*
+    
+"group1" : {
+    "pepe.php"
+}
+
+
+     */
+
+    private function renderJson()
+    {
+    //   dd($this->data);
+        $result = []; $group='DEBUG';
+        foreach ($this->data as $item) {
+            if($item['style'] == 'group')
+            {
+                $group = $group=='' ? $item['name'] : $group.'.'.$item['name'];
+                array_set($result, $group.'.profile', round( ($item['end'] - $item['start']) * 1000,2 ).'ms');
+            } elseif($item['style']=='endgroup') 
+            {
+                $group = substr($group,0, strrpos($group, '.'));
+
+            } else {
+                $keyName = $group == '' ? '' : $group.'.';
+                $keyName .= trim(str_replace('.',';',$item['name']));
+                
+                //dd($keyName);
+                if(isset($item['value']))
+                    array_set($result, $keyName, json_decode($item['value']));
+            }
+
+            $total=0; $sqls=[];
+            foreach ($this->sql as $item) {
+                $query = $item->sql;
+                foreach ($item->bindings as $value) 
+                {               
+                    $query = preg_replace('/\?/', $value, $query, 1);
+                }
+
+                $sqls[] = $query.' ('.strval($item->time).')';
+                $total = $total + $item->time;     
+            }
+            if(count($sqls>0))
+            {
+                array_set($result, 'SQLs', $sqls);
+                array_set($result, 'SQLs.Total time', $total);
+            }
+
+            array_set($result, 'REQUEST.URL',request()->url()); 
+            array_set($result, 'REQUEST.ROUTE',request()->route()->getPath().' ('.request()->route()->getName().') -> '.request()->route()->getActionName()); 
+            array_set($result, 'REQUEST.INPUT', request()->all()); 
+            array_set($result, 'REQUEST.HEADERS', request()->header()); 
+            array_set($result, 'SERVER',collect($_SERVER)->except(config('inspector.hide_server_keys'))); 
+            array_set($result, 'SESSION',session()->all()); 
+        
+        }
+
+        return $result;
+    }
 }
