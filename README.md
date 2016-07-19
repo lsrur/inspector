@@ -32,7 +32,7 @@ You can turn it off temporarily (for the current request) with the following com
 	Inspector::turnOff();
 
 ### Inspecting Objects and Variables
-	
+```php	
 	//Using Facade
 	Inspector::log(["description"], $myVar);
 	Inspector::info(["description"], $myVar);
@@ -42,10 +42,10 @@ You can turn it off temporarily (for the current request) with the following com
 	//Using helper functions
 	Inspector()->info(...);
 	Inspect($var1, $var2, $var3, ...);
-	
+```	
 	
 ### Grouping
-	
+```php	
 	Inspector::group("myGroup");
 		Inspector::info(["description"], $myVar);
 		Inspector::error(["description"], $myVar);
@@ -54,7 +54,7 @@ You can turn it off temporarily (for the current request) with the following com
 			Inspector::info(["description"], $myVar);
 		Inspector::endGroup();
 	Inspector::endGroup();
-		
+```		
 In addition to the ability to group information, each group excecution time will be measured and shown.
 
 ### Additional Information 
@@ -69,15 +69,15 @@ Each response will include information of:
 * Total allocated RAM and total script excecution time
 * Configurable $_SERVER dump 
 
-*In order to show exceptions you should add the following line under the "render" method of app/Exceptions/Handler.php
+**In order to show exceptions you should add the following line under the "render" method of app/Exceptions/Handler.php**
 
-    
+```php    
     public function render($request, Exception $e)
     {
         \Inspector::addException($e); 	// <- THIS LINE
         return parent::render($request, $e);
     }  
-    
+```    
     
 ## License
 Laravel Zoo Inspector is licensed under the MIT License.

@@ -64,10 +64,12 @@ class Inspector
     
         if($this->isJsonRequest($request) || $response->headers->get('content-type') == "application/json")
         {
-            $content = json_decode($response->getContent()) ?: [];
+            $content = json_decode($response->getContent(), true) ?: [];
             $debugInfo['title'] = $request->getMethod().':'.request()->url(). ' STATUS:'.$response->status();
             $script = $this->renderScript($debugInfo);
-            $content['_DEBUG'] = $script;            
+            
+            $content['_DEBUG'] = $script; 
+
             $response->setContent(json_encode($content));
 
         } else {
