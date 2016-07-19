@@ -1,3 +1,5 @@
+** UNDER DEVELOPMENT **
+
 # Laravel Zoo Inspector
 Laravel 5.x package to inspect, debug and profile many aspects of your server side code using your browser's console.
 
