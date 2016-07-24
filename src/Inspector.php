@@ -7,316 +7,234 @@ use \Symfony\Component\HttpFoundation\Response;
 
 class Inspector
 {
-    private $data = [];
-    private $sql = [];
-    private $exception = null;
-    private $isOn = true;
-    private $outputType = 'script';
 
+	private $collector;
+	private $is_on = true;
+	private $ajaxOutputFormat = 'script';
 
-    private function getSize($size, $precision = 2) {
-        $units = array('Bytes','kB','MB','GB','TB','PB','EB','ZB','YB');
-        $step = 1024;
-        $i = 0;
-        while (($size / $step) > 0.9) {
-            $size = $size / $step;
-            $i++;
-        }
-        return round($size, $precision).$units[$i];
-    }
+	public function __construct()
+	{
+		$this->collector = new Collector();
+		$this->ajaxOutputFormat = \Config::get('inspector.ajax_output', 'script');
+	}
 
-    public function turnOff()
-    {
-        $this->isOn = false;
-    }
+	/**
+	 * Show inspector full screen page and die
+	 * @return [type] [description]
+	 */
+	public function dd()
+	{
+		if(request()->wantsJson())
+		{
+			header("Content-Type: application/json", true);
+			$collectorData = $this->collector->getJson();
+			echo json_encode(['LARAVEL_INSPECTOR'=>$collectorData]);
+			die();
 
-    public function addException($e)
-    {
-        $this->exception = $e;
-    }
+		} else {
+			$collectorData = $this->collector->get();
+			$view = (string)view('inspector::fullscreen', $collectorData);
+			echo $view;
+			die();
+		}
+	}
+	
+	/**
+	 * Turn Inspector Off
+	 * @return [type] [description]
+	 */
+	public function turnOff()
+	{	
+		$this->is_on = false;
+	}
 
-    protected function isJsonRequest(Request $request)
-    {
-        if ($request->isXmlHttpRequest()) {
-            return true;
-        }
-        $acceptable = $request->getAcceptableContentTypes();
-        return (isset($acceptable[0]) && $acceptable[0] == 'application/json');
-    }
+	/**
+	 * InOn
+	 * @return boolean 
+	 */
+	public function isOn()
+	{
+		return config('app.debug') && $this->is_on;
+	}
 
-    private function renderScript($debugInfo)
-    {
-        if($this->outputType == 'json' || (\Config::get('inspector.force_json_output')))
+	/**
+	 * Show a table
+	 * @param  [type] $p1 [description]
+	 * @param  [type] $p2 [description]
+	 * @return [type]     [description]
+	 */
+	public function table($p1, $p2=null)
+	{
+
+		$name = isset($p2) ? $p1 : $p2;
+		$value = isset($p2) ? $p2 : $p1;
+
+		$extra = ['count'=>count($value), 'size'=>tb()->formatMemSize(mb_strlen(json_encode($value)))];
+
+		$this->collector->add('table', $name, $value, $extra);
+	}
+	
+	/**
+	 * Add an exception to collector's stack
+	 * if configured as exception render, respond with fullscreen view (dd)
+	 * @param [type] $e [description]
+	 */
+	public function addException($e)
+	{
+        $this->collector->addException($e);
+
+        if( $this->isOn() && config('inspector.exception_render', false))
         {
-            return $this->renderJson();
+			header('status: 500', true);
+			if(in_array('getStatusCode', get_class_methods(get_class($e))))
+				header('status:'.$e->getStatusCode(), true);
 
-        } else {
-            return preg_replace('~[\r\n]+~', '', view('inspector::debugscript', $debugInfo));
-
+			$this->dd();
         }
-    }
+	}    
 
-    public function injectScript(Request $request, Response $response)
+	/**
+	 * Conditional logging
+	 * @param  bool   $condition [description]
+	 * @return [type]            [description]
+	 */
+    public function if(bool $condition)
     {
-        if(!$this->isOn) return;
-
-        $debugInfo = [
-            'viewData'   =>  [],
-            'allocRam'   => $this->getAllocatedRAM(),
-            'isScript'   => false,
-            'isRedirect' => false,
-            'data'       => $this->data,
-            'exception'  => $this->exception, 
-            'sql'        => $this->sql
-        ];
+    	$this->collector->condition = $condition===false ? $condition : null;
     
-        if($this->isJsonRequest($request) || $response->headers->get('content-type') == "application/json")
-        {
-            $content = json_decode($response->getContent(), true) ?: [];
-            $debugInfo['title'] = $request->getMethod().':'.request()->url(). ' STATUS:'.$response->status();
-            $script = $this->renderScript($debugInfo);
-            
-            $content['_DEBUG'] = $script; 
-
-            $response->setContent(json_encode($content));
-
-        } else {
-            if($response->isRedirect())
-            {
-                $debugInfo['title'] = 'REDIRECT:'.$request->Url()." -> ".$response->getTargetUrl();
-                $debugInfo['isScript'] = true;
-                $debugInfo['isRedirect'] = true;
-                $script = $this->renderScript($debugInfo);
-                $request->session()->flash('_DEBUG', $script);
-        
-            } else {
-
-                if(isset($this->exception))
-                {  
-                    $debugInfo['title']    = 'EXCEPTION '.get_class($this->exception);
-                    $debugInfo['isScript'] = true;
-                    $script = $this->renderScript($debugInfo);
-                    $content = str_replace('</body>', $script, $response->getContent());   
-                    $response->setContent($content);
-                } elseif(gettype($response->getOriginalContent())=="object" && get_class($response->getOriginalContent()) == 'Illuminate\View\View')
-                {
-                    // View response
-                    $debugInfo['viewData'] = $response->getOriginalContent()->getData();
-                    $debugInfo['title']    = 'VIEW:'.$response->getOriginalContent()->getName();
-                    $debugInfo['isScript'] = true;
-                    $script = $this->renderScript($debugInfo);
-
-                    if($request->session()->has('_DEBUG'))
-                        $script = $request->session()->get('_DEBUG').$script;
-
-                    $content = str_replace('</body>', $script, $response->getContent());
-                    
-                    $response->setContent($content);
-                } else {
-                    // type Response
-                    $debugInfo['title']    = '(STRING RETURN)';
-                    $debugInfo['isScript'] = true;
-                    $script = $this->renderScript($debugInfo);
-
-                    if($request->session()->has('_DEBUG'))
-                        $script = $request->session()->get('_DEBUG').$script;
-        
-                    $content = '<body>'.$response->getContent().$script;
-                
-                    $response->setContent($content);                    
-                }
-         
-        
-            }
-
-        }
+    	return $this;
     }
 
-    private function add($p1, $p2, $style, $steps = 3)
-    {
-
-        $name = null;
-        $value = $p1; 
-        if(isset($p2))
-        {
-            $name = $p1;
-            $value = $p2;
-        }
-        if( is_array($value) || is_object($value) ) 
-        {
-            $value = json_encode($value,0);
-        } else {
-            $value = "'$value'";
-        }
-        $name .= $this->getTrace($steps);
-        $this->data[] = ['name'=>$name,'value'=>$value, 'style'=>$style];
-  
-    }
-
-    public function getAllocatedRAM()
-    {
-        return $this->getSize(memory_get_usage());
-    }
-
-    public function getData()
-    {
-        return $this->data;
-    }    
-
-    public function getSql()
-    {
-        return $this->sql;
-    }
-
-    public function group($name)
-    {
-        $this->data[] = ['name'=>$name, 'style'=>'group', 'start'=>microtime(true), 'end'=>0];
-        
-    }
-
-    public function endGroup()
-    {
-        $end = microtime(true);
-
-        for($i=count($this->data)-1; $i>=0; $i--)
-        {
-            if($this->data[$i]['style']=='group' && $this->data[$i]['end']==0)
-                $this->data[$i]['end'] = $end;
-        }
-        $this->data[] = ['style'=>'endgroup'];
-    }
-
-    private function getTrace($steps = 2)
-    {
-        if(!isset(debug_backtrace()[$steps]['file'])) $steps--;
-    
-        $file = collect(explode('/', debug_backtrace()[$steps]['file']))->last();
-        return " [".$file." #".debug_backtrace()[$steps]['line']."]";
-    
-    }
-
-    public function table($p1, $p2=null)
-    {
-        $cnt = '';
-
-        $name = 'unnamed'; 
-        $values = $p1;
-        if(isset($p2))
-        {
-            $name = $p1;
-            $values = $p2;
-        }
-        $name .= $this->getTrace();
-
-        if(is_array($values) || is_object($values))
-        {
-            $info = ' count:'.count($values).', json:'.$this->getSize(mb_strlen(json_encode($values)));
-            $this->data[] = ['name'=>$name. $info,'style'=>'group', 'start'=>0, 'end'=>-1];
-            $this->data[] = ['name'=>null,'value'=>json_encode($values), 'style'=>'table'];
-            $this->data[] = ['style'=>'endgroup'];
-         } else {
-            $this->log($name." (cannot build table)", $values) ;
-         }            
-    }
-
-    public function log($p1, $p2=null)
-    {
-        $this->add($p1,$p2,'log');
-    }
-
-    public function error($p1, $p2=null)
-    {
-        $this->add($p1,$p2,'error');
-    }
-    
-    public function info($p1, $p2=null)
-    {
-        $this->add($p1,$p2,'info');
-    }
-
-    public function dump()
-    {
-        var_dump($this->data);
-    }
-
-    public function addSql($sql)
-    {
-        $this->sql[] = $sql;
-    }
-        
     /**
-     * Used in timers
-     * @return float
+     * Magic methods
+     * @param  [type] $method [description]
+     * @param  [type] $args   [description]
+     * @return [type]         [description]
      */
-    private function microtime_float()
-    {
-        list($usec, $sec) = explode(" ", microtime());
-        return ((float)$usec + (float)$sec);
-    }
-
-    public function toJson()
-    {
-        $this->outputType ='json';
-
-    }
-
-    /*
-    
-"group1" : {
-    "pepe.php"
-}
-
-
-     */
-
-    private function renderJson()
-    {
-    //   dd($this->data);
-        $result = []; $group='DEBUG';
-        foreach ($this->data as $item) {
-            if($item['style'] == 'group')
-            {
-                $group = $group=='' ? $item['name'] : $group.'.'.$item['name'];
-                array_set($result, $group.'.profile', round( ($item['end'] - $item['start']) * 1000,2 ).'ms');
-            } elseif($item['style']=='endgroup') 
-            {
-                $group = substr($group,0, strrpos($group, '.'));
-
-            } else {
-                $keyName = $group == '' ? '' : $group.'.';
-                $keyName .= trim(str_replace('.',';',$item['name']));
-                
-                //dd($keyName);
-                if(isset($item['value']))
-                    array_set($result, $keyName, json_decode($item['value']));
-            }
-
-            $total=0; $sqls=[];
-            foreach ($this->sql as $item) {
-                $query = $item->sql;
-                foreach ($item->bindings as $value) 
-                {               
-                    $query = preg_replace('/\?/', $value, $query, 1);
-                }
-
-                $sqls[] = $query.' ('.strval($item->time).')';
-                $total = $total + $item->time;     
-            }
-            if(count($sqls>0))
-            {
-                array_set($result, 'SQLs', $sqls);
-                array_set($result, 'SQLs.Total time', $total);
-            }
-
-            array_set($result, 'REQUEST.URL',request()->url()); 
-            array_set($result, 'REQUEST.ROUTE',request()->route()->getPath().' ('.request()->route()->getName().') -> '.request()->route()->getActionName()); 
-            array_set($result, 'REQUEST.INPUT', request()->all()); 
-            array_set($result, 'REQUEST.HEADERS', request()->header()); 
-            array_set($result, 'SERVER',collect($_SERVER)->except(config('inspector.hide_server_keys'))); 
-            array_set($result, 'SESSION',session()->all()); 
-        
+    public function __call($method, $args)
+    {    
+        if( in_array($method,['log', 'error', 'success', 'info', 'warning']))
+        {
+			array_unshift($args, $method);
+	       	return call_user_func_array(array(&$this->collector, "add"), $args);
         }
-
-        return $result;
+        trigger_error("Method '$method' not found in Inspector class.", E_USER_ERROR);
     }
+
+    /**
+     * Add a group
+     * @param  [type] $name [description]
+     * @return [type]       [description]
+     */
+	public function group($name)
+	{
+		$this->collector->group($name);
+	}	
+
+	/**
+	 * End a group
+	 * @return [type] [description]
+	 */
+	public function endGroup()
+	{
+		$this->collector->endGroup();
+	}	
+	
+	/**
+	 * Add sql from DB listener
+	 * @param [type] $sql [description]
+	 */
+	public function addSql($sql)
+    {
+        $this->collector->addSql($sql);
+    }
+
+    /**
+     * Determine the injector type
+     * 
+     * @param  [type] $request  [description]
+     * @param  [type] $response [description]
+     * @return [type]           [description]
+     */
+	protected function getInjectorType($request, $response)
+	{
+		if(tb()->isJsonRequest($request))
+		{
+			$this->injectorType = 'json';
+		} elseif($response->isRedirect())
+		{
+			$this->injectorType = 'redirect';
+		} elseif(is_object($response->getOriginalContent()) && get_class($response->getOriginalContent()) == 'Illuminate\View\View')
+		{
+			$this->injectorType = 'view';
+		}
+
+		return isset($this->injectorType);
+	}
+
+
+	/**
+	 * Inject Inspector into Response
+	 * @param  [type] $request  [description]
+	 * @param  [type] $response [description]
+	 * @return [type]           [description]
+	 */
+	public function injectInspection($request, $response)
+	{
+		$this->request = $request;
+		$this->response = $response;
+		$collectorData = $this->collector->get();
+		
+		if(!$this->getInjectorType($request, $response)) return;
+
+		switch ($this->injectorType) {
+			case 'redirect':
+                $collectorData = $this->collector->get();
+	   			$inspectionBag = (string)view('inspector::view', $collectorData, 
+	   				[
+			        'target'   =>  $response->getTargetUrl(),
+	   				'title'=>'REDIRECT:'.$request->url().' >> '.$response->getTargetUrl()
+	   				]);
+
+                $request->session()->flash('LARAVEL_INSPECTOR_REDIRECT', $inspectionBag);
+				break;
+			case 'view':
+				$collectorData = $this->collector->get();
+		   		
+	   			$inspectionBag = (string)view('inspector::view', $collectorData, 
+	   				[
+			        'viewData'   =>  $response->getOriginalContent()->getData(),
+	   				'title'=>'VIEW:'.$response->getOriginalContent()->getName()
+	   				]);
+				// is redirection target?
+				if($request->session()->has('LARAVEL_INSPECTOR_REDIRECT'))
+	   			{
+	   				// attach previous script 
+	   				$inspectionBag = $request->session()->get('LARAVEL_INSPECTOR_REDIRECT').$inspectionBag;
+	   			} 
+
+	            $content = $response->getContent();
+
+	            // Ensure string content
+	            if(is_string($content))
+	            {
+					$content = str_replace('</body>', $inspectionBag, $response->getContent());
+	            	$response->setContent($content);
+	        	}
+				break;
+			
+			case 'json':
+				header('Content-Type: application/json');
+				$collectorData = $this->collector->getJson();
+	            $content = json_decode($this->response->getContent(), true) ?: [];
+	
+	           	$inspectionBag = $this->ajaxOutputFormat == 'json' ? $this->collector->getJson($collectorData) : 
+	           		(string)view('inspector::debuginfo', $this->collector->get(), 
+	   				['title'=>$request->getMethod().':'.request()->url(). ' STATUS:'.$response->status(), 'payload'=>$content]);
+
+	            $content['LARAVEL_INSPECTOR'] = $inspectionBag; 
+	            $response->setContent(json_encode($content));
+				break;
+		}
+	}
 }

@@ -1,7 +1,7 @@
 <?php $groupCount=0; $payloadSize=0;
 
 ?>
- 	console.groupCollapsed('LARAVEL INSPECTOR {!!$title!!}, RAM:{{$allocRam}}, TIME:{{round((microtime(true)-LARAVEL_START)*1000,2)}}ms');
+ 	console.groupCollapsed('LARAVEL INSPECTOR {!!$title!!}, RAM:{{$allocRam}}, TIME:{{$time}}ms');
  	@if(isset($payload))
  		<?php 
  		$payLog = '';
@@ -16,81 +16,73 @@
  		console.groupEnd();
  	@endif
  	@if(isset($exception))
- 		console.groupCollapsed("EXCEPTION: {!!$exception->getMessage()!!}, {!! $exception->getFile()!!} #{!! $exception->getLine()!!}");
- 		console.log("TRACE", {!!json_encode($exception->getTrace()) !!});
+ 		console.groupCollapsed("EXCEPTION: {!!$exception['message']!!}");
+ 		console.log("FILES", {!!json_encode($exception['files']) !!});
+ 		console.log("TRACE", {!!json_encode($exception['trace']) !!});
  		console.groupEnd();
  	@endif
-	@if(count($viewData))
- 		console.groupCollapsed('DATA PASSED TO VIEW');
+	@if(isset($viewData) && count($viewData))
+ 		console.groupCollapsed('DATA PASSED TO VIEW ({{count($viewData)}})');
 		@foreach($viewData as $key=>$value)
-		console.log('{{$key}}', {!! json_encode($value)!!});
+		console.log('{{$key}}:', {!! json_encode($value)!!});
 		@endforeach
 		console.groupEnd();
 	@endif
 	
-	@if(count($data)>0)
-	console.groupCollapsed('DEBUG');
-	@foreach($data as $item)
-		@if(in_array($item['style'], ['log', 'info',  'error', 'table']))
-			@if(isset($item['name']))
-				console.{{$item['style']}}("{{$item['name'].': ' }}", {!!$item['value']!!});
-			@else
-				console.{{$item['style']}}({!!$item['value']!!});
-			@endif
+	@if(isset($debug) && count($debug)>0)
+	console.groupCollapsed('MESSAGES ({{$messageCount}})');
+	@foreach($debug as $item)
+		@if(in_array($item['style'], ['log', 'info',  'error']))
+			console.{{$item['style']}}("{{$item['name'] or 'noname'}} ({{$item['trace']}})", {!!json_encode($item['value'])!!});
+		@elseif($item['style'] == 'success')
+			console.log("(success) {{$item['name'] or 'noname'}} ({{$item['trace']}})", {!!json_encode($item['value'])!!});
+		@elseif($item['style'] == 'table')
+			console.groupCollapsed("{{$item['name']}} ({{$item['trace']}}): Count:{{count($item['value'])}}, Size:{{$item['size']}}");
+			console.table({!!json_encode($item['value'])!!});
+			console.groupEnd();
 		@elseif($item['style'] == 'group')
-			<?php 
-				$time = $item['end'] > 0 ? ''.round( ($item['end'] - $item['start']) * 1000,2 ).'ms' : '';
-			?>
-			console.groupCollapsed('{{$item['name']}}', '{{$time}}');
+		
+			console.groupCollapsed('{{$item['name']}}', '{{$item['time']}}');
 			<?php $groupCount++; ?>
 		@elseif($item['style'] == 'endgroup')
 			console.groupEnd();
             <?php $groupCount--; ?>
 		@endif
 	@endforeach
+	@for($i=0; $i<$groupCount; $i++)
+    	console.groupEnd();
+	@endfor
+
  	console.groupEnd();
 	@endif
 
-	@for($i=0; $i<$groupCount; $i++)
-    	console.groupEnd();
-    @endfor
-
-	@if(count($sql) > 0)
-	    console.groupCollapsed('SQL ({{count($sql)}})');
-	    <?php $total = 0; ?>
-	    @foreach ($sql as $item)  
-	        <?php
-	        $query = $item->sql;
-	        foreach ($item->bindings as $value) 
-	        {	        	
-	            $query = preg_replace('/\?/', $value, $query, 1);
-	        }
-	        ?>
-	        <?php $total += $item->time; ?>
-	        console.groupCollapsed('{!!substr($query, 0,40)!!}... ({!!$item->time!!}ms)');
-	        console.log('{!!$query!!}');            
+	@if(count($sql['count']) > 0)
+	    console.groupCollapsed('SQL ({{$sql['count']}}, {{$sql['time']}}ms)');
+	    
+	    @foreach ($sql['items'] as $item)  
+	        console.groupCollapsed('{!!substr($item['sql'], 0,40)!!}... ({!!$item['time']!!}ms)');
+	        console.log('{!!$item['sql']!!}');            
 	        console.groupEnd();  
 	    @endforeach
-	    console.info('DB TOTAL TIME: {{$total}}ms');
 	    console.groupEnd();
 	@endif
 
-    @if(null !== request()->route())
-	    console.groupCollapsed('REQUEST');
+    console.groupCollapsed('REQUEST ({{count($request)}})');
+    @foreach($request as $key=>$value)
+    console.log("{{$key}}:", {!! json_encode($value)!!});
+    @endforeach
+    console.groupEnd();
 
-    	console.log('URL: {{request()->url()}}');
-        console.log('ROUTE: {!!request()->route()->getPath().' ('.request()->route()->getName().') -> '.request()->route()->getActionName()!!}');
-        console.log('INPUT:',{!!json_encode(request()->all())!!});
-    	console.log('HEADERS:',  {!! json_encode(request()->header())!!});
-
-        console.groupEnd();
-    @endif
-
-	console.groupCollapsed('SERVER');
-    console.log({!!json_encode(collect($_SERVER)->except(config('inspector.hide_server_keys')))!!});
+	console.groupCollapsed('SERVER ({{count($server)}})')
+    @foreach($server as $key=>$value)
+    console.log("{{$key}}:", {!! json_encode($value)!!});
+    @endforeach
     console.groupEnd();    
 
-    console.groupCollapsed('SESSION');
-    console.log({!!json_encode(session()->all())!!});
-    console.groupEnd();      
-    console.groupEnd(); 
+	console.groupCollapsed('SESSION ({{count($session)}})')
+    @foreach($session as $key=>$value)
+    console.log("{{$key}}:", {!! json_encode($value)!!});
+    @endforeach
+    console.groupEnd();    
+console.groupEnd();    
+

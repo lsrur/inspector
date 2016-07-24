@@ -1,8 +1,5 @@
-@if($isScript)
 <script>
-@endif
-@include('inspector::debuginfo',['data'=>$data])
-@if($isScript && !$isRedirect)
+@include('inspector::debuginfo')
 (function(XHR) {
     "use strict";
     var send = XHR.prototype.send;
@@ -13,8 +10,14 @@
         function onReadyStateChange() {
             if(self.readyState == 4 /* complete */) {
                 var response = JSON.parse(this.response);
-                console.log('a');
-                eval(response.LARAVEL_INSPECTOR);
+                if (typeof response.LARAVEL_INSPECTOR !== 'undefined') {
+                    if(typeof response.LARAVEL_INSPECTOR === 'string')
+                    {
+                        eval(response.LARAVEL_INSPECTOR);
+                    } else {
+                        console.log('LARAVEL INSPECTOR', response.LARAVEL_INSPECTOR);
+                    }
+                 }   
             }
             if(oldOnReadyStateChange) {
                 oldOnReadyStateChange();
@@ -31,8 +34,5 @@
         send.call(this, data);
     }
 })(XMLHttpRequest);
-@endif
-@if($isScript)
 </script>
 </body>
-@endif

@@ -15,8 +15,9 @@ class Inspector
         } catch (Exception $e) {
             $response = $this->handleException($request, $e);
         }
-        if(env('APP_DEBUG'))
-	       	\Inspector::injectScript($request, $response);
+
+        if(\Inspector::isOn())
+	       	\Inspector::injectInspection($request, $response);
 
         return $response;
     }

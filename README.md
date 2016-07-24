@@ -1,9 +1,18 @@
-** UNDER DEVELOPMENT **
+**UNDER HEAVY DEVELOPMENT**
 
-# Laravel Zoo Inspector
+# Laravel Inspector
 Laravel 5.x package to inspect, debug and profile many aspects of your server side code using your browser's console.
 
 Laravel Inspector collects information of your objects, variables, database queries, request data, views, session, etc. and automatically sends it to yours browsers console, whatever your code returns views or ajax responses.
+
+* [Installation](#installation)
+* [At a Glance](#glance)
+* [Messages](#messages)
+* [Groups](#data)
+* [Conditionals](#status)
+* [Revamped Dump & Die](#errors)
+* [Exception handling](#errors)
+
 
 ### Prerequisities
 The package was developed using PHP 7 so there may be incompatibilities with PHP 5.
@@ -55,8 +64,10 @@ If you want to force the output to JSON format for all requests, edit the config
 	Inspector::table(["description"], $myVar);
 	
 	//Using helper functions
-	Inspector()->info(...);
-	Inspect($var1, $var2, $var3, ...);
+	inspector()->info(...);
+	li()->warning(...);
+	inspect($var1, $var2, $var3, ...);
+	
 ```	
 	
 ### Grouping
