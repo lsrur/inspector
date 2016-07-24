@@ -1,10 +1,10 @@
 {
     "name": "lsrur/inspector",
-    "description": "Laravel Zoo Inspector, debugging tools for Laravel",
+    "description": "Laravel Inspector, debugging and profiling tools for Web Artisans",
     "license": "MIT",
     "minimum-stability": "stable",
      "keywords": [
-        "laravel", "debug", "profiler"
+        "laravel", "debug", "profiler", "exceptions"
     ],
     "autoload": {
         "psr-4": {
@@ -14,5 +14,7 @@
             "src/helpers.php"
         ]
     },
-    "require": {}
+    "require": {
+        "lsrur/toolbelt" : "0.3.*" 
+    }
 }

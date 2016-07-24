@@ -7,7 +7,7 @@
 			<strong>{{$key}}</strong>
 		</div>
 		<div>
-			<pre style="background: #fff; color: #c7254e; font-size:15px;border:0">{!! tb()->getDump($value) !!}</pre>
+			<pre style="background: #fff; color: #c7254e; font-size:15px;border:0">{!! inspector()->getDump($value) !!}</pre>
 		</div>
 	</div>
 	<br>

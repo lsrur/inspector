@@ -237,4 +237,35 @@ class Inspector
 				break;
 		}
 	}
+
+
+    public function getDump($v)
+    {
+        $styles = [
+            'default' => 'background-color:white; color:#222; line-height:1.2em; font-weight:normal; font:13px Monaco, Consolas, monospace; word-wrap: break-word; white-space: pre-wrap; position:relative; z-index:100000; border:0',
+            'num' => 'color:#a71d5d',
+            'const' => 'color:#795da3',
+            'str' => 'color:#df5000',
+            'cchr' => 'color:#222',
+            'note' => 'color:#a71d5d',
+            'ref' => 'color:#a0a0a0',
+            'public' => 'color:#795da3',
+            'protected' => 'color:#795da3',
+            'private' => 'color:#795da3',
+            'meta' => 'color:#b729d9',
+            'key' => 'color:#df5000',
+            'index' => 'color:#a71d5d',
+        ];
+        ob_start();
+
+        $dumper = new \Symfony\Component\VarDumper\Dumper\HtmlDumper;
+        $dumper->setStyles($styles);
+  
+        $dumper->dump((new \Symfony\Component\VarDumper\Cloner\VarCloner)->cloneVar($v));
+        
+        //$dumper->dump($v);
+        $result = ob_get_clean();
+    
+        return $result;    
+    }
 }

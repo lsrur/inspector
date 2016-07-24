@@ -5,7 +5,7 @@
 			<strong>Input</strong>
 		</div>
 		<div>
-			<pre style="background: #fff; color: #c7254e; font-size:15px;border:0">{!! tb()->getDump($request['INPUT']) !!}</pre>
+			<pre style="background: #fff; color: #c7254e; font-size:15px;border:0">{!! inspector()->getDump($request['INPUT']) !!}</pre>
 		</div>
 	</div>
 	<br>
@@ -14,7 +14,7 @@
 			<strong>Headers</strong>
 		</div>
 		<div>
-			<pre style="background: #fff; color: #c7254e; font-size:15px;border:0">{!! tb()->getDump($request['HEADERS']) !!}</pre>
+			<pre style="background: #fff; color: #c7254e; font-size:15px;border:0">{!! inspector()->getDump($request['HEADERS']) !!}</pre>
 		</div>
 	</div>
 </div>

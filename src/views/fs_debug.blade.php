@@ -59,7 +59,7 @@
                             </table>
                             @endif
                           @else
-                              {!!tb()->getDump($item['value'])!!}
+                              {!!inspector()->getDump($item['value'])!!}
                           @endif
                       </div>
                     </div>
