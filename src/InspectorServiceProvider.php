@@ -13,7 +13,28 @@ class InspectorServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+ 
+
+        app()->booted(function(){
+       
+           define('LARAVEL_BOOTED', microtime(true));
+        });  
+
+        // \View::composer('*', function($view)
+        // {
+        //     // prifile views?
+        // });   
+
+        \Blade::directive('li', function($args) {
+           
+            $args = explode(',',str_replace(["(", ")"],'', $args));
+            $cmd = str_replace(["'", '"'], '', $args[0]);
+            array_shift($args);
+            $args = implode(',',$args);
+            return "<?php li()->$cmd($args); ?>";
+        });
     
+
         if(\DB::connection()->getDatabaseName())
         { 
            \DB::listen(function($sql) {

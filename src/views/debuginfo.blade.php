@@ -29,9 +29,9 @@
 		console.groupEnd();
 	@endif
 	
-	@if(isset($debug) && count($debug)>0)
+	@if(isset($messages) && count($messages)>0)
 	console.groupCollapsed('MESSAGES ({{$messageCount}})');
-	@foreach($debug as $item)
+	@foreach($messages as $item)
 		@if(in_array($item['style'], ['log', 'info',  'error']))
 			console.{{$item['style']}}("{{$item['name'] or 'noname'}} ({{$item['trace']}})", {!!json_encode($item['value'])!!});
 		@elseif($item['style'] == 'success')
@@ -42,7 +42,7 @@
 			console.groupEnd();
 		@elseif($item['style'] == 'group')
 		
-			console.groupCollapsed('{{$item['name']}}', '{{$item['time']}}');
+			console.groupCollapsed('{{$item['name']}}', '({{$item['time']}}ms)');
 			<?php $groupCount++; ?>
 		@elseif($item['style'] == 'endgroup')
 			console.groupEnd();

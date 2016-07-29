@@ -4,6 +4,8 @@
  * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap/blob/gh-pages/LICENSE)
  */
 
+
+
 pre {
    border-radius: 0;
 }
@@ -118,12 +120,6 @@ pre {
 
 .sidebar-nav > .sidebar-stats {
     padding: 20px 0px;
-}
-
-.sidebar-nav > .sidebar-brand {
-	margin-top: 20px;
-    font-size: 18px;
-
 }
 
 .sidebar-nav > .sidebar-brand a {

@@ -1,5 +1,8 @@
-<?php $i=0; ?>
-<div class="container-fluid inspector-panel" id='panel-sqls'>
+<?php 
+	$sql = $collectors['SQLs']['items'];
+	//dd($sql);
+$i=0; ?>
+<div class="container-fluid inspector-panel" id='panel-SQLs'>
 	@foreach($sql['items'] as $item)		
 	<div style="border:1px solid #ddd; box-shadow: 0px 0px 2px #ccc;">
 		<div style="border-bottom:1px solid #ddd; padding:5px">
@@ -17,11 +20,11 @@
 				@foreach($item['files'] as $file)
 					<strong>{{$file['fileName']}} #{{$file['line']}}</strong><span>
 					&nbsp;
-						@if(isset($file['tag']) && $file['tag']=='mine')
-							<span style="font-size:11px;position: relative; top: -1px" class="label label-danger">MY CODE</span>
+						@if(isset($file['tag']) && $file['tag']=='my code')
+							<span style="margin-left:5px;font-size:11px;position: relative; top: -1px" class="label label-danger">MY CODE</span>
 						@endif
 						@if(isset($file['tag']) && $file['tag']=='vendor')
-							<span style="font-size:11px;position: relative; top: -1px" class="label label-warning">VENDOR CODE</span>
+							<span style="margin-left:5px;font-size:11px;position: relative; top: -1px" class="label label-warning">VENDOR</span>
 						@endif
 						<pre style="background: #fafafa; border:0">{!! $file['src'] !!}</pre>		
 					

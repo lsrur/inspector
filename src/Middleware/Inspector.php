@@ -16,7 +16,8 @@ class Inspector
             $response = $this->handleException($request, $e);
         }
 
-        if(\Inspector::isOn())
+        define('INSPECTOR_START', microtime(true));
+        if(app('Inspector')->isOn())
 	       	\Inspector::injectInspection($request, $response);
 
         return $response;

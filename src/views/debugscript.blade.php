@@ -13,7 +13,6 @@
         function onReadyStateChange() {
             if(self.readyState == 4 /* complete */) {
                 var response = JSON.parse(this.response);
-                console.log('a');
                 eval(response.LARAVEL_INSPECTOR);
             }
             if(oldOnReadyStateChange) {

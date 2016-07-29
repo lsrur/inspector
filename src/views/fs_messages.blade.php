@@ -1,13 +1,17 @@
-@if(isset($messageCount) && $messageCount>0)
-<div class="container-fluid inspector-panel" id='panel-debug'>
+<?php
+  
+  $messages = $collectors['Messages']['items'];
+ // dd($messages);
+?>
+<div class="container-fluid inspector-panel" id='panel-Messages'>
     <div class="row">
-        <div class="col-lg-12">
+      <div class="col-lg-12">
 			<?php $group=0?>
-        	@foreach($messages as $item)
+          @foreach($messages as $item)
             	@if($item['style'] == 'endgroup')
             		<?php $group-- ?>
             		<span style="font-size:13px;padding:3px 20px 3px 10px;position: relative; left:-2px; color:white;background-color:#F4645F;border-bottom: 1px solid #F4645F">
-                        End {{$item['name']}} ({{$item['time']}}ms)   
+                        End {{$item['name'] or ''}} ({{$item['time']}}ms)   
                     </span>
             		</div>
             	@endif
@@ -15,7 +19,7 @@
             		<?php $dl=$group*20;  ?>
             		<div style="font-size:13px; margin-left: {{$dl}}px;border-left: 2px solid #F4645F; margin-bottom: 12px">
 
-            			<span style="margin-bottom:10px; padding:3px 20px 3px 10px;background: #F4645F; color:white; position: relative; top:2px">{{$item['name']}} ({{$item['time']}}ms)</span>
+            			<span style="margin-bottom:10px; padding:3px 20px 3px 10px;background: #F4645F; color:white; position: relative; top:2px">{{$item['name'] or ''}} ({{$item['time']}}ms)</span>
             			<div style="height: 10px">&nbsp;</div>
         			<?php $group++?>
 					
@@ -30,7 +34,7 @@
                     ?>
                     <div style="margin-left:10px; border: 1px solid #ddd; margin-bottom:10px;box-shadow: 0px 0px 2px #ccc;">
                       <div style="padding:5px 10px;border-bottom: 1px solid #ddd ">
-                            <strong>{{$item['name']}} ({{$item['trace']}})</strong>
+                            <strong>{{$item['name'] or ''}} ({{$item['trace']}})</strong>
                             @if(in_array($item['style'], ['info', 'warning', 'error', 'success']))
                                 <span class="label label-{{$panelStyle}}" style="position:relative; top:-1px">{{strtoupper($item['style'])}}</span>
                             @endif  
@@ -70,5 +74,5 @@
           
     </div>
 </div>
-@endif
+
 

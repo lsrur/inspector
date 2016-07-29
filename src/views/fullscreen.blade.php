@@ -1,3 +1,6 @@
+<?php
+//dd($collectors);
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,135 +22,113 @@
     	.inspector-panel {
     		display: none;
     	}
+        .timeline-app {
+            background-color: #FFB6B4;
+            border-radius: 3px;
+            height: 20px;
+            color: #000;
+            padding-left: 4PX;
+        }
+        .timeline-timer {
+            background-color: #78C6FF;
+            border-radius: 3px;
+            height: 20px;
+            color: #000;
+            padding-left: 4PX;
+        }
+        .timeline-sql {
+            background-color: #F1C40F;
+            border-radius: 3px;
+            height: 20px;
+               color: #000;
+            padding-left: 4PX;
+        }
+        .timestamp {
+          width: 0; 
+          height: 0; 
+          border-left: 10px solid transparent;
+          border-right: 10px solid transparent;
+          border-bottom: 10px solid #27AE60;
+          position: relative;
+          left: -10px;
+          top: 5px;
+        }   
     </style>
+    <script>
+        @include('inspector::jquery');
+    </script>
 </head>
-
 <body>
-
     <div id="wrapper">
-        <!-- Sidebar -->
-            <div id="sidebar-wrapper" style="float: left; width: 220px">
-                <ul class="sidebar-nav sidebar-inverse">
-                    <li class="sidebar-brand">
-                        <div style="text-align: center; margin-bottom:20px;color: white; font-size:22px">Laravel Inspector</div>
-                       
-                    </li>
-           
-                    @if(isset($exception))
+        <div id="sidebar-wrapper" style="float: left; width: 220px">
+            <ul class="sidebar-nav sidebar-inverse">
+                <li class="sidebar-brand">
+                    <div style="margin-top: 10px;margin-bottom: 10px;text-align: center; color: white; font-size:22px">
+                        Laravel Inspector
+                    </div>
+                </li>
+                @foreach($collectors as $key=>$value)
+                    @if($value['count'])
                     <li>
-                        <a class="menu-item active" href="#" id='panel-exception-item' data-panel='panel-exception'>EXCEPTION
-                        <span class="badge badge-info">1</span>
+                        <a class="menu-item " href="#" id='panel-{{$key}}-item' data-panel='panel-{{$key}}'>{{strtoupper($key)}}
+                        @if($value['showCounter'])
+                            <span class="badge badge-info">{{$value['count']}}</span>
+                        @endif
                         </a>
-                    </li>    
-                    @endif              
-                    @if($messageCount>0)
-                    <li>
-                        <a class="menu-item" href="#" id='panel-debug-item' data-panel='panel-debug'>
-                        MESSAGES<span class="badge badge-info">{{$messageCount}}</span></a>
-                    </li>
+                    </li>   
                     @endif
-                    @if($sql['count'])
-                    <li>
-                        <a class="menu-item" id='panel-sqls-item' data-panel='panel-sqls' href="#">SQLs
-                        <span class="badge badge-info">{{$sql['count']}}</span>
-                        </a>
-                    </li>
-                    @endif
-                    <li>
-                        <a class="menu-item" id='panel-request-item' data-panel='panel-request' href="#">REQUEST</a>
-                    </li>
-                    <li>
-                        <a class="menu-item" id='panel-server-item' data-panel='panel-server' href="#">SERVER</a>
-                    </li>
-                    <li>
-                        <a class="menu-item" id='panel-session-item' data-panel='panel-session' href="#">SESSION</a>
-                    </li>
-                    <li>
-                        <a class="menu-item" id='panel-phpinfo-item' data-panel='panel-phpinfo' href="#">PHP INFO</a>
-                    </li>
-                    <li class="sidebar-stats" style="border-bottom: 0">
-                         <div style="margin-top:14px;line-height: 1.8em; font-weight:300;color:white; padding-left: 10px">
-                            <div style="height: 24px; font-size: 22px">{{$time}}ms</div>
-                            <div style="font-size:12px; height: 28px;">TOTAL REQUEST TIME</div>
-                            <br>
-                            @if(isset($sql['time']))
-                            <div style="height: 24px; font-size: 22px">{{$sql['time']}}ms</div>
-                            <div style="font-size:12px; height: 28px;;">DB ACCESS TIME</div>
-                            <br>
-                            @endif
-                            <div style="height: 24px; font-size: 22px">{{$allocRam}}</div>
-                            <div style="font-size:12px; height: 28px;">ALLOCATED MEMORY</div>
-                            <br>
-                            <div style="height: 24px; font-size: 22px">{{ini_get('memory_limit')}}B</div>
-                            <div style="font-size:12px; height: 28px;">PHP MEMORY LIMIT</div>
-                            <br> 
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        <!-- /#sidebar-wrapper -->
+                @endforeach
+                <li class="sidebar-stats" style="border-bottom: 0">
+                     <div style="margin-top:1px;line-height: 1.8em; font-weight:300;color:white; padding-left: 10px">
+                        <div style="height: 23px; font-size: 18px">{{$time}}ms</div>
+                        <div style="font-size:12px; height: 34px;">TOTAL REQUEST TIME</div>
+                        
+                        @if(isset($collectors['SQLs']))
+                        <div style="height: 23px; font-size: 18px">{{$collectors['SQLs']['items']['time']}}ms</div>
+                        <div style="font-size:12px; height: 34px;">TOTAL DB ACCESS TIME</div>
+                        @endif
+                        <div style="height: 23px; font-size: 18px">{{$memoryUsage}} / {{ini_get('memory_limit')}}B</div>
+                        <div style="font-size:12px; height: 34px;">USED RAM/LIMIT</div>
 
-        <!-- Page Content -->
+                        <div style="height: 23px; font-size: 18px">{{app()->version()}} / {{phpversion()}}</div>
+                        <div style="font-size:12px; height: 34px;">LARAVEL/PHP VERSIONS</div>
+
+                        <br> 
+                    </div>
+                </li>
+            </ul>
+        </div>
+
         <div id="page-content-wrapper">
-            @include('inspector::fs_debug')
-         	@include('inspector::fs_sqls')
-            @if(isset($exception))
-         	@include('inspector::fs_exception')
-            @endif
-            @include('inspector::fs_request')
+            @include('inspector::fs_messages')
+            @include('inspector::fs_exceptions')
+            @include('inspector::fs_sqls')
             @include('inspector::fs_server')
             @include('inspector::fs_session')
-            @include('inspector::fs_phpinfo')
-
-
+            @include('inspector::fs_request')
+            @include('inspector::fs_routes')
+            @include('inspector::fs_timers')
         </div>
-        <!-- /#page-content-wrapper -->
-
     </div>
-    <!-- /#wrapper -->
-
-    <!-- jQuery -->
     <script>
-    	@include('inspector::jquery');
-    </script>
-
-    <script>
-    @if(isset($exception))
-    var activePanel = '#panel-exception';
-    @elseif(count($debug)>0)
-    var activePanel = '#panel-debug';
-    @elseif($sql['count'])>0)
-    var activePanel = '#panel-sql';
-    @else
-    var activePanel = '#panel-request';
-    @endif;
-    
-    $(activePanel).show();
+    @foreach($collectors as $key=>$value)
+        @if($value['count']>0)
+                var activePanel = '#panel-{{$key}}';
+            @break
+        @endif
+    @endforeach
+        $(activePanel).show();
     $(activePanel+'-item').addClass('active');
 
-    $(".menu-item").click(function(e) {
+    $(activePanel+'-item').addClass('active');
+        $(".menu-item").click(function(e) {
         e.preventDefault();
-        console.log(e);
-    	var panel = '#'+$(this).attr('data-panel');
-
+        var panel = '#'+$(this).attr('data-panel');
         $(activePanel).fadeOut(0);
-    	$(activePanel+'-item').removeClass('active');
-    	$(panel).fadeIn(200);
+        $(activePanel+'-item').removeClass('active');
+        $(panel).fadeIn(200);
         $(this).addClass( "active" );
-    	activePanel = panel;
-        
-
-    	console.log('click', activePanel);
+        activePanel = panel;
     });
     </script>
-
 </body>
-
-</html>
-
-<?php
-    // } catch (Exception $e) {
-    //     dump($e);
-    //     die();
-    // }
-?>
