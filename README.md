@@ -1,5 +1,5 @@
 # Laravel Inspector
-Laravel 5.x package to inspect, debug and profile many aspects of your server side code using your browser's console.
+Laravel 5.x package to inspect, debug and profile your server side code using your browser's console.
 
 * [At a Glance](#glance)
 * [Installation](#installation)
@@ -18,19 +18,17 @@ Laravel 5.x package to inspect, debug and profile many aspects of your server si
 ## <a name="glance"></a>At a Glance
 
 
-
-
 |[![](https://s31.postimg.org/d5y10qy57/image.png)](https://s31.postimg.org/xdbgt1vmh/image.png)|[![](https://s31.postimg.org/vo2dkzfx7/image.png)](https://s31.postimg.org/hhmmpr521/image.png)|
 |:-:|:-:|
-|Messages|Caught exception|
+|Messages|Inspecting caught exceptions|
 
 |[![](https://s31.postimg.org/kw07s5b2z/image.png)](https://s31.postimg.org/hcea2c8d5/image.png)|[![](https://s31.postimg.org/o49aixmqj/image.png)](https://s31.postimg.org/8vjd55t21/image.png)|
 |:-:|:-:|
-|Dump and die on steroids |idd() SQLs page|
+|idd() - Dump and die on steroids|idd() SQLs page|
 
 |[![](https://s31.postimg.org/g1b47m257/image.png)](https://s31.postimg.org/7vt29gdw9/image.png)|[![](https://s31.postimg.org/ps8fxl0m3/image.png)](https://s31.postimg.org/4vc7sx2l5/image.png)|
 |:-:|:-:|
-|Laravel Inspector as Exception renderer|Timers and Timeline|
+|Laravel Inspector as the default Exception renderer|Timers and Timeline|
 
 
 |[![](https://s31.postimg.org/uaaqpognv/image.png)](https://s31.postimg.org/3p87u4eah/image.png)|[![](https://s31.postimg.org/vduv1n1az/image.png)](https://s31.postimg.org/ke9nq1avt/image.png)|
@@ -39,8 +37,24 @@ Laravel 5.x package to inspect, debug and profile many aspects of your server si
 
 |[![](https://s31.postimg.org/7be16rknv/image.png)](https://s31.postimg.org/inqmojtcp/image.png)|[![](https://s32.postimg.org/osf9dbdrp/image.png)](https://s32.postimg.org/mnuwc8c4z/image.png)|
 |:-:|:-:|
-|Under Postman REST client app|Under CLI|
+|Using Postman REST client app|Using CLI|
 
+
+|Available Collectors|Information about|
+|---|---|
+|MessageCollector|User's messages and dumps|
+|ExceptionCollector|Exceptions|
+|DBCollector|Queries, including execution time and parameter bingings|
+|TimersCollector|Timers and time stamps|
+|RoutesCollector|Application routes|
+|RequestCollector|Current Request|
+|ResponseCollector|Current Response|
+|SessionCollector|Session variables|
+|ServerCollector|$_SERVER dump|
+|More to come...| |
+
+
+[comment]:$  
 ## <a name="installation"></a>Installation
 
 **The package was developed using PHP 7 so there may be -minor- incompatibilities with PHP 5.4** 
@@ -80,7 +94,7 @@ In order to include exceptions in Larevel Inspector responses and/or use Inspect
 #### <a name="config"></a>Configuration options
 
 ```php    
-// file "app/config/inspector.php"
+// file "app/config/inspector.php" 
 
 return [
 	
@@ -94,7 +108,7 @@ return [
 	];
 
 ```
-
+Remember to publish the configutation file if you're going to modify these options.
   
 ## <a name="usage"></a>Usage
 Laravel inspector can be invoked using the Facade, the provided helper functions and a Blade directive:
@@ -180,7 +194,6 @@ Laravel Inspector allows you to group messages into nodes and subnodes:
 In addition to the ability to group information, each group and subgroup excecution time will be measured and shown. If you forget to close a group, Laravel Inspector will automatically do it at the end of the script, but the excecution time for that group can not be taken.
 
 ## <a name="timers"></a>Timers
-We have a few methods to measure the time of our code:
 
 |Method|Description |
 |----|-----|
@@ -216,6 +229,8 @@ Laravel Inspector includes a handy method <code>if()</code>to operate conditiona
 	li()->if(!$whatIExpect)->idd($a);
 	
 ```
+The <code>if()</code> function is not avalilable under the blade directive <code>@li</code>.
+
 ## <a name="redirects"></a>Redirects
 Laravel Inspector handles redirects smoothly; showing the collectors bag for both, the original and the target view.
 
@@ -250,7 +265,7 @@ The function <code>addException()</code> will inspect our caught exceptions:
 
 ```
 
-Refer to the [configuration options](#config) section to setup Laravel Inspector as the default exception renderer :
+Optionally, you can setup LI as the default Exception renderer during development time (app.debug=true). Refer to the [configuration options](#config) to do so. 
 
 ## <a name="requests"></a>VIEW/AJAX/API requests, how it works 
  
