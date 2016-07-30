@@ -35,7 +35,7 @@ class ResponseCollector extends BaseCollector
 			$this->responseData['status'] = $resp->status();
 	//		$this->responseData['headers'] = $resp->headers->all();
 			$this->responseData['class'] = get_class($resp); 
-					$this->responseData['size'] = tb()->formatMemSize(strlen($resp->getContent()));
+					$this->responseData['size'] = formatMemSize(strlen($resp->getContent()));
 
 			if(get_class($resp)=="Illuminate\Http\Response")
 			{	
@@ -43,7 +43,7 @@ class ResponseCollector extends BaseCollector
 				{
 					$this->responseData['view'] = $resp->getOriginalContent()->getName();
 					$this->responseData['dataPassedToView'] =$resp->getOriginalContent()->getData();
-					$this->responseData['size'] = tb()->formatMemSize(strlen($resp->getContent()));					
+					$this->responseData['size'] = formatMemSize(strlen($resp->getContent()));					
 				} 
 			}
 		}

@@ -27,7 +27,7 @@ class inspector
     public function dd($status = 206) // partial content?
     {
         $time = microtime(true);
-        $memoryUsage = tb()->formatMemSize(memory_get_usage());
+        $memoryUsage = formatMemSize(memory_get_usage());
         if(\App::runningInConsole())
         {
             $result = $this->collectorMan->getRaw();

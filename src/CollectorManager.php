@@ -59,7 +59,7 @@ class CollectorManager
 	{
 		
 		$scriptTime = round((microtime(true)-LARAVEL_START)*1000,2);
-		$scriptRAM = tb()->formatMemSize(memory_get_usage());
+		$scriptRAM = formatMemSize(memory_get_usage());
 		
 		$statusStyle = 'font-size:11px;border-radius:3px;padding:1px 4px;color:white; background-color: #27AE60';
 		if($statusCode >= 400 && $statusCode < 500)
@@ -107,7 +107,7 @@ class CollectorManager
 			
 		return $result;
 	}	
-	
+
 	public function getRaw()
 	{
 		$result = [];
