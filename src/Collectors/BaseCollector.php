@@ -8,6 +8,7 @@ abstract class BaseCollector
 
     public $title;
     public $showCounter = true;
+
     private $defaultStyle = "font-size:12px; line-height:1.7em";
 
     protected function genericToScript($data)
@@ -43,23 +44,19 @@ abstract class BaseCollector
     {
         if(substr($title,-1)!==':') $title.=':';
         $styles = [
-            'info' => 'font-size:11px;line-height:1.8em;border-radius:3px;padding:3px 5px;color:white; background-color: #3498DB',
-            'warning' => 'font-size:11px;line-height:1.8em;border-radius:3px;padding:3px 5px;color:white; background-color: #F39C12',
-            'success' => 'font-size:11px;line-height:1.8em;border-radius:3px;padding:3px 5px;color:white; background-color: #18BC9C',
-            'error' => 'font-size:11px;line-height:1.8em;border-radius:3px;padding:3px 5px;color:white; background-color: #E74C3C',
+            'info' => 'font-size:10px;line-height:1.8em;border-radius:3px;padding:3px 5px;color:white; background-color: #3498DB',
+            'warning' => 'font-size:10px;line-height:1.8em;border-radius:3px;padding:3px 5px;color:white; background-color: #F39C12',
+            'success' => 'font-size:10px;line-height:1.8em;border-radius:3px;padding:3px 5px;color:white; background-color: #18BC9C',
+            'error' => 'font-size:10px;line-height:1.8em;border-radius:3px;padding:3px 5px;color:white; background-color: #E74C3C',
         ];
         
         if(in_array($cmd, ['info','warning', 'success', 'error']))
         {
             $title ="'%c".strtoupper($cmd)."%c $title'".
-                ",'".$styles[$cmd]."', 'font-size:11px; font-weight:bold'";
+                ",'".$styles[$cmd]."', 'font-size:10px; font-weight:bold'";
         } else {
-               $title ="'%c $title', 'font-size:11px; font-weight:bold'";
+               $title ="'%c $title', 'font-size:10px; font-weight:bold'";
         }
-        
-
-        //$str = isset($title) ? "'%c$title'," : '';
-        
         return "console.log(".$title.",".json_encode($data)."); ";
     }
     /**

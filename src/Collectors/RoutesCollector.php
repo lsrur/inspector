@@ -6,8 +6,8 @@ class RoutesCollector extends BaseCollector
 {
 	public $title = 'Routes';
 	public $showCounter = false;
-
 	private $routes = [];
+	
 	public function getScript()
 	{
 		return $this->genericToScript($this->routes);

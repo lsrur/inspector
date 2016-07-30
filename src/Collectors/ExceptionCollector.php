@@ -23,20 +23,20 @@ class ExceptionCollector extends BaseCollector
     {
         if($this->count() == 0) return "";
         $script = "console.group('EXCEPTIONS (".$this->count().")');"; 
-        $styleWarning = 'font-size:11px;line-height:1.8em;border-radius:3px;padding:3px 5px;color:white; background-color: #F39C12';
-        $styleError = 'font-size:11px;line-height:1.8em;border-radius:3px;padding:3px 5px;color:white; background-color: #E74C3C';
-        $styleClass = 'font-size:11px; line-height:1.8em;';
-        $styleMessage = 'font-size:11px; color:red; line-height:1.8em;';
-        $styleFile = 'font-size:11px; font-weight:normal; line-height:1.8em;';
+        $styleWarning = 'font-size:10px;line-height:1.8em;border-radius:3px;padding:3px 5px;color:white; background-color: #F39C12';
+        $styleError = 'font-size:10px;line-height:1.8em;border-radius:3px;padding:3px 5px;color:white; background-color: #E74C3C';
+        $styleClass = 'font-size:10px; line-height:1.8em;';
+        $styleMessage = 'font-size:10px; color:red; line-height:1.8em;';
+        $styleFile = 'font-size:10px; font-weight:normal; line-height:1.8em;';
    // dd($this->exceptions);
         foreach ($this->exceptions as $e) {
             if($e['caught'])
             {
                 $caught = 'CAUGTH';
-                $styleTag = 'font-size:11px;line-height:1.8em;border-radius:3px;padding:3px 5px;color:white; background-color: #18BC9C';
+                $styleTag = 'font-size:10px;line-height:1.8em;border-radius:3px;padding:3px 5px;color:white; background-color: #18BC9C';
             } else {
                 $caught = 'UNCAUGHT';
-                $styleTag = 'font-size:11px;line-height:1.8em;border-radius:3px;padding:3px 5px;color:white; background-color: #E74C3C';
+                $styleTag = 'font-size:10px;line-height:1.8em;border-radius:3px;padding:3px 5px;color:white; background-color: #E74C3C';
             }
 
             $fileName = $e['files'][0]['fileName'];
@@ -96,7 +96,7 @@ class ExceptionCollector extends BaseCollector
     public function b_handleException($exception, $caught=false)
     {
         if(! app('Inspector')->isOn()) return;
-        
+
         $files = [['file'=>$exception->getFile(), 'line'=>$exception->getLine()]];
         
         foreach ($exception->getTrace() as $item) {

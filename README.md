@@ -20,7 +20,7 @@ Laravel 5.x package to inspect, debug and profile your server side code using yo
 
 |[![](https://s31.postimg.org/d5y10qy57/image.png)](https://s31.postimg.org/xdbgt1vmh/image.png)|[![](https://s31.postimg.org/vo2dkzfx7/image.png)](https://s31.postimg.org/hhmmpr521/image.png)|
 |:-:|:-:|
-|Messages|Inspecting caught exceptions|
+|Messages|Exceptions|
 
 |[![](https://s31.postimg.org/kw07s5b2z/image.png)](https://s31.postimg.org/hcea2c8d5/image.png)|[![](https://s31.postimg.org/o49aixmqj/image.png)](https://s31.postimg.org/8vjd55t21/image.png)|
 |:-:|:-:|
@@ -44,7 +44,7 @@ Laravel 5.x package to inspect, debug and profile your server side code using yo
 |---|---|
 |MessageCollector|User's messages and dumps|
 |ExceptionCollector|Exceptions|
-|DBCollector|Queries, including execution time and parameter bingings|
+|DBCollector|Queries, including execution time and parameters binding|
 |TimersCollector|Timers and time stamps|
 |RoutesCollector|Application routes|
 |RequestCollector|Current Request|
@@ -129,7 +129,7 @@ Laravel inspector can be invoked using the Facade, the provided helper functions
 	// "inspect" function makes an "Inspector::log($v)" for each provided parameter
 	inspect($var1, $var2, $var3, ...);
 	
-	// Dump and die using Laravel Inspector screen
+	// Dump and die using Laravel Inspector function
 	idd();
 	idd($var1, $var2);
 	
@@ -155,13 +155,13 @@ You can inspect objects and variables with the following methods, each of which 
 
 |Method|Description |
 |----|-----|
-|log([string  \$description,] mixed \$data)|Outputs data with "log" format |
-|info([string \$description,] mixed $data)|Outputs data with "info" format |
-|error([string \$description,] mixed \$data)|Outputs data with "error" format |
-|warning([string \$description,] mixed \$data)|Outputs data with "warning" format |
-|success([string \$description,] mixed \$data)|Outputs data with "success" format |
-|log([string \$description,] mixed \$data)|Outputs data with "log" format |
-|table([string \$description,] mixed \$data)|Outputs data in a table (\$data will be converted to an array if it is not, useful for Eloquent models and collections).|
+|log([string  $description,] mixed $data)|Outputs data with "log" format |
+|info([string $description,] mixed $data)|Outputs data with "info" format |
+|error([string $description,] mixed $data)|Outputs data with "error" format |
+|warning([string $description,] mixed $data)|Outputs data with "warning" format |
+|success([string $description,] mixed $data)|Outputs data with "success" format |
+|log([string $description,] mixed $data)|Outputs data with "log" format |
+|table([string $description,] mixed $data)|Outputs data inside a table |
 
 [comment]: $
 
@@ -184,11 +184,11 @@ Laravel Inspector allows you to group messages into nodes and subnodes:
 
 ```php	
 	li()->group('MyGroup');
-	li()->info($data);
-	li()->group('MySubGroup');
-	li()->error('oops', $errorCode);
-	li()->groupEnd();
-	li()->success('perfect!');
+		li()->info($data);
+		li()->group('MySubGroup');
+			li()->error('oops', $errorCode);
+		li()->groupEnd();
+		li()->success('perfect!');
 	li()->groupEnd();
 ```		
 In addition to the ability to group information, each group and subgroup excecution time will be measured and shown. If you forget to close a group, Laravel Inspector will automatically do it at the end of the script, but the excecution time for that group can not be taken.
@@ -226,13 +226,13 @@ Laravel Inspector includes a handy method <code>if()</code>to operate conditiona
 	li()->timeEnd('myTimer'); // do not worry if it has not been initialized
 	
 	// Dump and die
-	li()->if(!$whatIExpect)->idd($a);
+	li()->if(!$whatIExpect)->idd($thatThing);
 	
 ```
 The <code>if()</code> function is not avalilable under the blade directive <code>@li</code>.
 
 ## <a name="redirects"></a>Redirects
-Laravel Inspector handles redirects smoothly; showing the collectors bag for both, the original and the target view.
+Laravel Inspector handles redirects smoothly; showing the collectors bag for both, the original and the target views.
 
 ## <a name="dump"></a>Dump and Die
 

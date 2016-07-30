@@ -7,7 +7,6 @@ use \Symfony\Component\HttpFoundation\Response;
 
 class inspector
 {
-    private $collector;
 
     private $is_on = true;
     private $condition;
@@ -36,9 +35,10 @@ class inspector
         }
 
         if (request()->wantsJson()) {
+
             $title = $status == 206 ? 'DD' : "UNCAUGHT EXCEPTION";
             header("status: $status", true);
-            $collectorData = request()->headers->ps('laravel-inspector') ?
+            $collectorData = request()->headers->has('laravel-inspector') ?
                 $this->collectorMan->getScripts('inspector', $title, $status) :
                 $this->collectorMan->getPreJson('inspector');
 
@@ -158,10 +158,9 @@ class inspector
     {
         $this->response = $response;
 
-        if (!$this->getInjectorType($request, $response)) {
+        if (!$this->getInjectorType($request, $response)) 
             return;
-        }
-
+        
         switch ($this->injectorType) {
             case 'redirect':
                 $collectorsData = $this->collectorMan->getScripts('inspector',  'REDIRECT:'.$request->url().' -> '.$response->getTargetUrl(), $response->getStatusCode());
@@ -206,7 +205,7 @@ class inspector
     public function getDump($v)
     {
         $styles = [
-            'default' => 'background-color:white; color:#222; line-height:1.2em; font-weight:normal; font:13px Monaco, Consolas, monospace; word-wrap: break-word; white-space: pre-wrap; position:relative; z-index:100000; border:0',
+            'default' => 'background-color:white; color:#222; line-height:1.2em; font-weight:normal; font:13px Monaco, Consolas, monospace; word-wrap: break-word; white-space: pre-wrap; position:relative; z-index:1000; border:0',
             'num' => 'color:#a71d5d',
             'const' => 'color:#795da3',
             'str' => 'color:#df5000',

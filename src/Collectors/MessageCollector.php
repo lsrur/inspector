@@ -13,8 +13,6 @@ class MessageCollector extends BaseCollector
 		return count($this->stack);
 	}
 
-
-
 	public function getScript()
 	{
 		$script = "console.group('MESSAGES');"; 
@@ -131,7 +129,7 @@ class MessageCollector extends BaseCollector
         if(starts_with($extra['trace'], 'PhpEngine.php'))
         {
             $extra['trace'] = 'BLADE';
-            // TODO: look for view name
+            // TODO: look for view name?
         }
  		$name = isset($p2) ? $p1 : $p2;
 		$value = isset($p2) ? $p2 : $p1;
@@ -139,15 +137,16 @@ class MessageCollector extends BaseCollector
         {
             if(get_class($value) == "Illuminate\Pagination\LengthAwarePaginator")
             {
-
                 $value = $value->getCollection()->toArray();
             } elseif( in_array('toArray', get_class_methods(get_class($value)) ))
             {
                 $value = $value->toArray();
             } 
+
         }
-        $name = $name ?? '';
-        $this->stack[] = array_merge(array_filter(['name'=>$name,'value'=>$value, 'style'=>$style]), $extra);     
+//        dd($style,$value);
+        $name = isset($name) ? $name : '';
+        $this->stack[] = array_merge(['name'=>$name,'value'=>$value, 'style'=>$style], $extra);     
     }
 
 }

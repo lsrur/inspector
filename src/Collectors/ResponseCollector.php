@@ -6,18 +6,15 @@ class ResponseCollector extends BaseCollector
 {
 	public $title = 'Response';
 	public $showCounter = false;
-
 	private $responseData;
 	
 	public function getScript()
 	{
-		$this->get();
-		return $this->genericToScript($this->responseData);
+		return $this->genericToScript($this->get());
 	}
 	
 	public function getPreJson()
 	{
-
 		return $this->get();
 	}
 
@@ -33,9 +30,9 @@ class ResponseCollector extends BaseCollector
 		if(isset($resp))
 		{
 			$this->responseData['status'] = $resp->status();
-	//		$this->responseData['headers'] = $resp->headers->all();
+			$this->responseData['headers'] = $resp->headers->all();
 			$this->responseData['class'] = get_class($resp); 
-					$this->responseData['size'] = formatMemSize(strlen($resp->getContent()));
+			$this->responseData['size'] = formatMemSize(strlen($resp->getContent()));
 
 			if(get_class($resp)=="Illuminate\Http\Response")
 			{	
@@ -43,8 +40,10 @@ class ResponseCollector extends BaseCollector
 				{
 					$this->responseData['view'] = $resp->getOriginalContent()->getName();
 					$this->responseData['dataPassedToView'] =$resp->getOriginalContent()->getData();
-					$this->responseData['size'] = formatMemSize(strlen($resp->getContent()));					
 				} 
+			} elseif(get_class($resp)=="Illuminate\Http\JsonResponse") {
+				// Response is json then put the response content as part of the collector data
+				$this->responseData['payload'] = json_decode($resp->getContent()); 			
 			}
 		}
 		return $this->responseData;

@@ -17,7 +17,7 @@ class Inspector
         }
 
         define('INSPECTOR_START', microtime(true));
-        if(app('Inspector')->isOn())
+        if(\Inspector::isOn())
 	       	\Inspector::injectInspection($request, $response);
 
         return $response;
