@@ -1,30 +1,56 @@
-**UNDER HEAVY DEVELOPMENT**
-
 # Laravel Inspector
 Laravel 5.x package to inspect, debug and profile many aspects of your server side code using your browser's console.
 
-Laravel Inspector collects information of objects, variables, database queries, request data, views, exceptions, session, etc. and automatically sends it to the browsers console.
-
-* [Installation](#installation)
 * [At a Glance](#glance)
+* [Installation](#installation)
+* [Configuration](#configuration)
+* [Usage](#usage)
 * [Messages](#messages)
-* [Groups](#data)
-* [Conditionals](#status)
-* [Dump & Die](#errors)
-* [Exception handling](#errors)
+* [Timers](#timers)
+* [Conditionals](#conditionals)
+* [Redirects](#redirects)
+* [Dump & Die](#dump)
+* [Exception handling](#exceptions)
+* [VIEW/AJAX/API requests, how it works](#requests)
+* [License](#license)
 
 
-### Prerequisities
-The package was developed using PHP 7 so there may be incompatibilities with PHP 5.
+## <a name="glance"></a>At a Glance
 
-* PHP 7.x
-* Laravel 5.x
 
-### Installation
+
+
+|[![](https://s31.postimg.org/d5y10qy57/image.png)](https://s31.postimg.org/xdbgt1vmh/image.png)|[![](https://s31.postimg.org/vo2dkzfx7/image.png)](https://s31.postimg.org/hhmmpr521/image.png)|
+|:-:|:-:|
+|Messages|Caught exception|
+
+|[![](https://s31.postimg.org/kw07s5b2z/image.png)](https://s31.postimg.org/hcea2c8d5/image.png)|[![](https://s31.postimg.org/o49aixmqj/image.png)](https://s31.postimg.org/8vjd55t21/image.png)|
+|:-:|:-:|
+|Dump and die on steroids |idd() SQLs page|
+
+|[![](https://s31.postimg.org/g1b47m257/image.png)](https://s31.postimg.org/7vt29gdw9/image.png)|[![](https://s31.postimg.org/ps8fxl0m3/image.png)](https://s31.postimg.org/4vc7sx2l5/image.png)|
+|:-:|:-:|
+|Laravel Inspector as Exception renderer|Timers and Timeline|
+
+
+|[![](https://s31.postimg.org/uaaqpognv/image.png)](https://s31.postimg.org/3p87u4eah/image.png)|[![](https://s31.postimg.org/vduv1n1az/image.png)](https://s31.postimg.org/ke9nq1avt/image.png)|
+|:-:|:-:|
+|Redirection|API/Ajax calls|
+
+|[![](https://s31.postimg.org/7be16rknv/image.png)](https://s31.postimg.org/inqmojtcp/image.png)|[![](https://s32.postimg.org/osf9dbdrp/image.png)](https://s32.postimg.org/mnuwc8c4z/image.png)|
+|:-:|:-:|
+|Under Postman REST client app|Under CLI|
+
+## <a name="installation"></a>Installation
+
+**The package was developed using PHP 7 so there may be -minor- incompatibilities with PHP 5.4** 
+
+Installing the package via composer:
+
 	composer require lsrur/inspector
 
 
-After updating composer, add the ServiceProvider to the providers array in config/app.php:
+Next, add InspectorServiceProvider to the providers array in <code>config/app.php</code>:
 
 	Lsrur\Inspector\InspectorServiceProvider::class,
 
@@ -33,133 +59,248 @@ And this Facade in the same configuration file:
 
 	'Inspector' => Lsrur\Inspector\Facade\Inspector::class,
 	
-Pubhlish the configuration file:
+You can optionally publish the configuration file with:
 	
 	php artisan vendor:publish
 
-### Configuration
 
-In order to include exceptions in Inspector responses and/or use Inspector as your exceptions renderer, add the following line in the file <code>app/Exceptions/Handler.php</code> of your Laravel project:
+## <a name="configuration"></a>Configuration
+#### Exceptions Handler
+
+In order to include exceptions in Larevel Inspector responses and/or use Inspector as the default exceptions renderer, add the following line in the file <code>app/Exceptions/Handler.php</code> of your Laravel project:
 
 ```php    
     public function render($request, Exception $e)
     {
-        \Inspector::addException($e); 	// <- THIS LINE
+        \Inspector::handleException($e); 	// <= THIS LINE
         return parent::render($request, $e);
     }  
 ```      
 
-Configuration variables <code>app/config/inspector.php</code>
+#### <a name="config"></a>Configuration options
 
 ```php    
-	return [
-	
-	// change to "json" if you want to force Inspector to send jsons instead of scritps 
-	'ajax_output' => 'script',
+// file "app/config/inspector.php"
 
-	// Use Laravel Inspector as exception renderer during development time (app.debug=true)
+return [
+	
+	// Use Laravel Inspector as your default exception renderer during development time (app.debug=true)
 	'exception_render' => true,
 
 	// Hide those keys form $_SERVER dump
-    'hide_server_keys' => ['APP_KEY', 'DB_HOST', 'DB_PASSWORD', 'DB_USERNAME', 'HTTP_COOKIE', 	'MAIL_PASSWORD', 'REDIS_PASSWORD'],
+    'hide_server_keys' => [
+    	'APP_KEY','DB_HOST','DB_PASSWORD','DB_USERNAME','HTTP_COOKIE','MAIL_PASSWORD', 'REDIS_PASSWORD'],
 
-];
+	];
 
 ```
 
-## Sample Screenshot
-
-|||
-|:-:|:-:|
-| sadasdadasdasdasd | ![pepe](https://s31.postimg.org/fs5jjuh9j/006.png) |
-| sadasdadasdasdasd | ![pepe](https://s31.postimg.org/fs5jjuh9j/006.png) |
-| sadasdadasdasdasd | ![pepe](https://s31.postimg.org/fs5jjuh9j/006.png) |
-
-## Usage
-Laravel inspector will be active if only the config variable app.debug is true.  
-You can turn Inspector off temporarily (just for the current request) with the following command:
-
-	\Inspector::turnOff();
-
-By default, Inspector returns a Javascript to render the output on the browser console. If you want to force the output to JSON format for the current request, use the following:
-
-	\Inspector::toJson();
-	
-If you want to force the output to JSON format for all requests, edit the configuration variable 
-`force_json_output` in the file `config/inspector.php`	
-
-### Inspecting objects and variables
-The available methods are <code>info</code>,<code>log</code>,<code>table</code>,<code>success</code>,<code>error</code> and <code>warning</code>:
+  
+## <a name="usage"></a>Usage
+Laravel inspector can be invoked using the Facade, the provided helper functions and a Blade directive:
 
 ```php	
 	//Using Facade
-	Inspector::log(["description"], $myVar);
-	Inspector::info(["description"], $myVar);
-	Inspector::error(["description"], $myVar);
-	Inspector::table(["description"], $myVar);
-	Ispector::warning($myObj);
+	\Inspector::log(...);
+	\Inspector::info(...);
 		
-	//Using helper functions
+	//Using the "inspector" helper function
 	inspector()->info(...);
 	inspector()->warning($myVar);
 	
 	// "li" is an alias of "inspector"
-	li()->warning(...);
+	li()->error(...);
 	li()->group('myGroup');
 	
-	// inspect
+	// "inspect" function makes an "Inspector::log($v)" for each provided parameter
 	inspect($var1, $var2, $var3, ...);
 	
-```	
-	
-### Grouping
-```php	
-	Inspector::group("myGroup");
-		Inspector::info(["description"], $myVar);
-		Inspector::error(["description"], $myVar);
-		Inspector::table(["description"], $myVar);
-		Inspector::group("mySubGroup");
-			Inspector::info(["description"], $myVar);
-		Inspector::endGroup();
-	Inspector::endGroup();
-```		
-In addition to the ability to group information, each group (and subgroup) excecution time will be measured and shown.
-
-### Conditionals
-```php	
-	inspector()->if($count > 100)->warning('count', $count);
-	
-	Inspector::if($tooMuch)->dd();
-
-```
-
-### Dump and die
-
-Dump the entire message bag and end the script.
-
-```php	
-	inspector()->dd();
-	// adding some last-minute vars
-	inspector::dd($var1, $var2, ...);
-	
-	// dd helper function
+	// Dump and die using Laravel Inspector screen
 	idd();
-	idd($var1, $var2,...)
+	idd($var1, $var2);
 	
+	// Inside Blade
+	@li(cmd,param1,param2,...)
+	
+	// samples
+	@li('log', 'My comment', $myVar)
+	@li(log, 'My comment', $myVar) //also works with no command quotes
+	@li(group,"myGroup")
+	@li(endGroup)
+	
+```	
+
+**Laravel inspector will only be active if the config variable <code>app.debug</code> is true.**  
+Anyway, you can temporarily turn Inspector off (just for the current request) with:
+
+	li()->turnOff();
+	
+
+## <a name="messages"></a>Messages
+You can inspect objects and variables with the following methods, each of which has its own output format:
+
+|Method|Description |
+|----|-----|
+|log([string  \$description,] mixed \$data)|Outputs data with "log" format |
+|info([string \$description,] mixed $data)|Outputs data with "info" format |
+|error([string \$description,] mixed \$data)|Outputs data with "error" format |
+|warning([string \$description,] mixed \$data)|Outputs data with "warning" format |
+|success([string \$description,] mixed \$data)|Outputs data with "success" format |
+|log([string \$description,] mixed \$data)|Outputs data with "log" format |
+|table([string \$description,] mixed \$data)|Outputs data in a table (\$data will be converted to an array if it is not, useful for Eloquent models and collections).|
+
+[comment]: $
+
+Examples:
+
+```php	
+	li()->log("MyData", $myData);
+	li()->info($myData);
+	li()->table("clients", $myClientsCollection); 
+```
+Additionally, you can use the "inspect" helper function to quickly inspect objects and variables.
+
+```php	
+	inspect($var1, $var2, $var3,...);
 
 ```
 
-### Additional Information 
-Each response will include information of:
+#### Grouping Messages
+Laravel Inspector allows you to group messages into nodes and subnodes:
 
-* Database queries, including param bindings, excecution time and surce code
-* Exceptions
-* Complete request information
-* Data passed to views (in view responses)
-* Previous inspections (in redirect responses)
-* Session information
-* Total allocated RAM and total script excecution time
-* Configurable $_SERVER dump 
+```php	
+	li()->group('MyGroup');
+	li()->info($data);
+	li()->group('MySubGroup');
+	li()->error('oops', $errorCode);
+	li()->groupEnd();
+	li()->success('perfect!');
+	li()->groupEnd();
+```		
+In addition to the ability to group information, each group and subgroup excecution time will be measured and shown. If you forget to close a group, Laravel Inspector will automatically do it at the end of the script, but the excecution time for that group can not be taken.
+
+## <a name="timers"></a>Timers
+We have a few methods to measure the time of our code:
+
+|Method|Description |
+|----|-----|
+|time(string $timerName)|Starts a timer |
+|timeEnd(string $timerName)|Ends a timer |
+|timeStamp(string $name)|Adds a single marker to the timeline |
+
+[comment]: $
+
+Examples:
+
+```php	
+	li()->timer("MyTimer");
+	// my code
+	li()->timeEnd("MyTimer");
+	
+	li()->timeStamp('Elapsed time from LARAVEL_START here'); 
+```
+
+## <a name="conditionals"></a>Conditionals
+Laravel Inspector includes a handy method <code>if()</code>to operate conditionally:
+
+```php	
+	li()->if($count > 100)->warning('too much?', $count);
+	
+	li()->if($itsHappeningAgain)->time('myTimer');
+	// ...
+	li()->if($itsHappeningAgain)->timeEnd('myTimer');
+	// OR
+	li()->timeEnd('myTimer'); // do not worry if it has not been initialized
+	
+	// Dump and die
+	li()->if(!$whatIExpect)->idd($a);
+	
+```
+## <a name="redirects"></a>Redirects
+Laravel Inspector handles redirects smoothly; showing the collectors bag for both, the original and the target view.
+
+## <a name="dump"></a>Dump and Die
+
+The <code>idd()</code> method/helper will dump the entire collectors bag and terminates the script: 
+
+```php	
+	\Inspector::idd();
+	li()->idd();
+	
+	// or simply
+	idd();
+	
+	// adding last minute data
+	idd($var1, $var2,...)
+
+	
+```
+As the rest of the package, this feature intelligently determine how will be the format of the output, even if the call was performed from CLI. 
+
+## <a name="exceptions"></a>Exceptions
+
+The function <code>addException()</code> will inspect our caught exceptions:  
+
+```php	
+	try {
+		...
+	} catch (Exception $e) {
+		li()->addExceptin($e);
+	}
+
+```
+
+Refer to the [configuration options](#config) section to setup Laravel Inspector as the default exception renderer :
+
+## <a name="requests"></a>VIEW/AJAX/API requests, how it works 
+ 
+Laravel Inspector (LI) automatically detects the type of the request/response pair and determines the output format. If a View response is detected, the code needed to elegantly display the collected information in the browser console will be injected as a javascript into that view. Along with this, LI will also inject a small piece of pure javascript code that serves as a generic http interceptor, which will examine subsequent AJAX calls looking for information sent by LI
+(this interceptor was tested under pure javascript, Angular 1.x ($http) and jQuery ($.ajax) and should work with any js framework). The interceptor also adds a header in each client AJAX call to let LI  know that the interceptor is present. Then, from Laravel side, during an AJAX request or a JSON response, LI will sent a script to be interpreted (and properly rendered in the browsers console) by the interceptor OR a pure Json if that header is not present, assuming that the request was sent from cURL, a REST client app or something else.
+
+If you are developing, for example, an SPA and using Laravel only for the API but not to serve the web page/s, you can include the following code in your client app to take full advantage of all LI formatting features.
+
+```javascript
+(function(XHR) {
+	"use strict";
+
+	var send = XHR.prototype.send;
+
+	XHR.prototype.send = function(data) {
+		var self = this;
+		var oldOnReadyStateChange;
+		var url = this._url;
+		this.setRequestHeader('Laravel-Inspector', 'interceptor-present');
+		function onReadyStateChange() {
+			if(self.readyState == 4 /* complete */) {
+		  
+				var response = JSON.parse(this.response);
+				if (typeof response.LARAVEL_INSPECTOR !== 'undefined') {
+					if(typeof response.LARAVEL_INSPECTOR === 'string')
+					{
+						eval(response.LARAVEL_INSPECTOR);
+					} else {
+						console.log('LARAVEL INSPECTOR ', response);
+					 }
+				 }   
+			}
+			if(oldOnReadyStateChange) {
+				oldOnReadyStateChange();
+			}
+		}
+		if(!this.noIntercept) {            
+			if(this.addEventListener) {
+				this.addEventListener("readystatechange", onReadyStateChange, false);
+			} else {
+				oldOnReadyStateChange = this.onreadystatechange; 
+				this.onreadystatechange = onReadyStateChange;
+			}
+		}
+		send.call(this, data);
+	}
+})(XMLHttpRequest);
+```
+ 
+[comment]: $
     
-## License
-Laravel Zoo Inspector is licensed under the MIT License.
+## <a name="license"></a>License
+Laravel Inspector is licensed under the [MIT License](https://opensource.org/licenses/MIT).

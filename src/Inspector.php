@@ -58,7 +58,6 @@ class inspector
                 dump($e);
                 die();
             }
-            $view = str_replace(array("\r\n", "\r", "\n", "\t"), '', $view);
             echo $view;
             die();
         }

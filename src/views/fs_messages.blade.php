@@ -8,7 +8,7 @@
       <div class="col-lg-12">
 			<?php $group=0?>
           @foreach($messages as $item)
-            	@if($item['style'] == 'endgroup')
+            	@if($item['style'] == 'groupend')
             		<?php $group-- ?>
             		<span style="font-size:13px;padding:3px 20px 3px 10px;position: relative; left:-2px; color:white;background-color:#F4645F;border-bottom: 1px solid #F4645F">
                         End {{$item['name'] or ''}} ({{$item['time']}}ms)   
@@ -40,25 +40,26 @@
                             @endif  
                       </div>
                       <div class="panel-body">
-                          @if($item['style']=='table' && is_array($item['value']))
-                            <?php $item['value'] = json_decode(json_encode($item['value']),true);?>
-                            @if(count($item['value']) > 0)
-                            <table class="table table-striped" style="font-size:15px">
-                              <thead>
-                                <tr>
-                                  <th><?php echo implode('</th><th>', array_keys(current($item['value']))); ?></th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                            <?php foreach($item['value'] as $row): array_map('serialize', $row); ?>
-                                <tr>
-                                  <?php $row=array_values(array_map('serialize', $row));  ?>
-                                  <td><?php echo implode('</td><td>', $row); ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                              </tbody>
-                            </table>
-                            @endif
+                          @if($item['style']=='table')
+                            @if(isset($item['value']) && is_array($item['value']))
+                              @if(count($item['value']) > 0)
+                              <table class="table table-striped" style="font-size:15px">
+                                <thead>
+                                  <tr>
+                                    <th><?php echo implode('</th><th>', array_keys(current($item['value']))); ?></th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                              <?php foreach($item['value'] as $row): array_map('serialize', $row); ?>
+                                  <tr>
+                                    <?php $row=array_values(array_map('serialize', $row));  ?>
+                                    <td><?php echo implode('</td><td>', $row); ?></td>
+                                  </tr>
+                              <?php endforeach; ?>
+                                </tbody>
+                              </table>
+                              @endif
+                             @endif
                           @else
                               {!!inspector()->getDump($item['value'])!!}
                           @endif

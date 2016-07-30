@@ -16,7 +16,7 @@ console.groupEnd();
 		var self = this;
 		var oldOnReadyStateChange;
 		var url = this._url;
-		this.setRequestHeader('Laravel-Inspector', 'interceptor-enabled');
+		this.setRequestHeader('Laravel-Inspector', 'interceptor-present');
 		function onReadyStateChange() {
 			if(self.readyState == 4 /* complete */) {
 		  
@@ -26,64 +26,7 @@ console.groupEnd();
 					{
 						eval(response.LARAVEL_INSPECTOR);
 					} else {
-						console.log('LARAVEL INSPECTOR ', response);
-						
-					// 	var resp = response.LARAVEL_INSPECTOR;
-					// 	console.groupCollapsed('LARAVEL INSPECTOR ' + resp.request.METHOD + ' ' + resp.request.URL +
-					// 		', RAM:'+resp['allocRam']+', TIME:'+resp['time'] +', STATUS:' + this.statusText + ' (' + this.status+')' );
-
-					// 	if(resp['exception'] !== undefined)
-					// 	{
-					// 		console.groupCollapsed('EXCEPTION ' + resp['exception']['class']);
-					// 		console.log('Message:', resp.exception['message']);
-					// 		console.log('Class:', resp.exception['class']);
-					// 		console.log('Code:', resp.exception['code']);
-					// 		console.log('Files:', resp.exception['files']);
-					// 		console.log('Trace:', resp.exception['trace']);
-					// 		console.groupEnd();
-					// 	}
-					// 	if(resp['messageCount'] >0)
-					// 	{
-					// 		console.groupCollapsed('MESSAGES ('+resp['messageCount']+')');
-					// 		recurseMessages(resp['messages']);
-					// 		console.groupEnd();
-					// 	}
-
-					// 	if(resp['payload'] !== undefined)
-					// 	{
-					// 		console.groupCollapsed('PAYLOAD');
-					// 		console.log( resp['payload']);
-					// 		console.groupEnd();
-					// 	}
-
-					// 	if(resp['sql'] !== undefined)
-					// 	{
-					// 		console.groupCollapsed('SQL ('+resp.sql.count+', '+resp.sql.time+'ms)');
-					// 		for(var i=0; i<resp.sql.items.length;i++)
-					// 		{
-					// 			console.groupCollapsed(resp.sql.items[i]['sql'].substr(0,40) + ' ('+resp.sql.items[i]['time']+')ms' );
-					// 			console.log(resp.sql.items[i]['sql']);
-					// 			console.log('Connection:', resp.sql.items[i]['connection']);
-					// 			console.log('Files:', resp.sql.items[i]['files']);
-					// 			console.groupEnd();
-					// 		}
-					// 		console.groupEnd();
-					// 	}
-
-					// 	var keys = ['request', 'server', 'response', 'session'];
-					// 	for(var i=0; i<keys.length;i++)
-					// 	{
-					// 		if(resp[keys[i]] !== undefined)
-					// 		{    
-					// 			console.groupCollapsed(keys[i].toUpperCase());
-					// 			for(var key in resp[keys[i]])
-					// 			{
-					// 				console.log(key+':', resp[keys[i]][key]);
-					// 			}
-					// 			console.groupEnd();
-					// 		}
-					// 	}
-					// 	console.groupEnd();
+						console.log('LARAVEL INSPECTOR ', response);	
 					 }
 				 }   
 			}

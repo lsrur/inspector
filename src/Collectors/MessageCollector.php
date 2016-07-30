@@ -126,7 +126,7 @@ class MessageCollector extends BaseCollector
      */
     public function add($style, $p1, $p2=null, $extra=[], $traceSteps = 4 )
     {
-  
+   
  		$extra['trace'] = $this->getTrace($traceSteps);
         if(starts_with($extra['trace'], 'PhpEngine.php'))
         {
@@ -135,6 +135,17 @@ class MessageCollector extends BaseCollector
         }
  		$name = isset($p2) ? $p1 : $p2;
 		$value = isset($p2) ? $p2 : $p1;
+        if($style == 'table' && !is_array($value))
+        {
+            if(get_class($value) == "Illuminate\Pagination\LengthAwarePaginator")
+            {
+
+                $value = $value->getCollection()->toArray();
+            } elseif( in_array('toArray', get_class_methods(get_class($value)) ))
+            {
+                $value = $value->toArray();
+            } 
+        }
         $name = $name ?? '';
         $this->stack[] = array_merge(array_filter(['name'=>$name,'value'=>$value, 'style'=>$style]), $extra);     
     }
