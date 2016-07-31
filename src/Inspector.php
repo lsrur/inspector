@@ -24,7 +24,6 @@ class inspector
     {
         $this->response = $response;
         $this->request = $request;
-        
         $this->dd(206,true);
     }
 
@@ -124,7 +123,7 @@ class inspector
         } elseif ($collector = $this->collectorMan->getMethod($method)) {
             $method = 'b_'.$method;
         } else {
-            trigger_error("Method $method not found in collector classes", E_USER_ERROR);
+            die("Method $method not found in collector classes");
         }
 
         return call_user_func_array(array(&$collector, $method), $args);

@@ -19,7 +19,7 @@ console.groupEnd();
 		this.setRequestHeader('Laravel-Inspector', 'interceptor-present');
 		function onReadyStateChange() {
 			if(self.readyState == 4 /* complete */) {
-		  
+		  		
 				var response = JSON.parse(this.response);
 				if (typeof response.LARAVEL_INSPECTOR !== 'undefined') {
 					if(typeof response.LARAVEL_INSPECTOR === 'string')
@@ -28,6 +28,8 @@ console.groupEnd();
 					} else {
 						console.log('LARAVEL INSPECTOR ', response);	
 					 }
+					 console.log(this);
+//					 this.response = {'ok':1};
 				 }   
 			}
 			if(oldOnReadyStateChange) {
@@ -42,43 +44,11 @@ console.groupEnd();
 				this.onreadystatechange = onReadyStateChange;
 			}
 		}
+
 		send.call(this, data);
 	}
 })(XMLHttpRequest);
 
-function recurseMessages(bag)
-{
-	   
-	for(var key in bag) 
-	{
-		var style = key.substr(0, key.indexOf('_'));
-		var name = key.substr(key.indexOf('_')+1);
-		switch (style)
-		{
-			case "table":
-				console.groupCollapsed(name);
-				console.table(bag[key]);
-				console.groupEnd();
-				break;
-			case "group":
-				console.group(name+' ('+bag[key]['_time']+'ms)');
-				recurseMessages(bag[key]);
-				console.groupEnd();
-				break;
-			case "warning":
-				console.log(name+' (warning):', bag[key]);
-				break;
-			case "success":
-				console.log(name+' (success):', bag[key]);
-				break;
-			default :
-				if(style != '')
-					console[style](name+':', bag[key]);
-				break;
-		}
-	}
-
-}
 </script>
 <!-- LARAVEL INSPECTOR END -->
 

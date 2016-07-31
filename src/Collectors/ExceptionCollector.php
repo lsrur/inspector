@@ -93,7 +93,12 @@ class ExceptionCollector extends BaseCollector
         $this->b_handleException($exception, true);
     }
 
-    public function b_handleException($exception, $caught=false)
+    public function b_renderException($exception)
+    {
+        $this->handleException($exception, false);
+    }
+
+    public function handleException($exception, $caught=false)
     {
         if(! app('Inspector')->isOn()) return;
 
@@ -115,7 +120,8 @@ class ExceptionCollector extends BaseCollector
             'caught' => $caught
             ];    
          //   dd($collectorClass, $methodName);
-        if(!$caught && config('inspector.exception_render', false))
+         //   && config('inspector.exception_render', false)
+        if(!$caught )
         {
             $status = (in_array('getStatusCode', get_class_methods(get_class($exception)))) ? $exception->getStatusCode() : 500;
             

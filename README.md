@@ -9,8 +9,8 @@ Laravel 5.x package to inspect, debug and profile your server side code using yo
 * [Timers](#timers)
 * [Conditionals](#conditionals)
 * [Redirects](#redirects)
-* [Dump](#dump)
-* [Exception handling](#exceptions)
+* [Dump and die](#dump)
+* [Exceptions](#exceptions)
 * [VIEW/AJAX/API requests, how it works](#requests)
 * [License](#license)
 
@@ -57,7 +57,7 @@ Laravel 5.x package to inspect, debug and profile your server side code using yo
 [comment]:$  
 ## <a name="installation"></a>Installation
 
-**The package was developed using PHP 7 so there may be -minor- incompatibilities with PHP 5.4** 
+**The package was developed using PHP 7 so there may be some -minor- incompatibilities with PHP 5.4** 
 
 Installing the package via composer:
 
@@ -73,42 +73,20 @@ And this Facade in the same configuration file:
 
 	'Inspector' => Lsrur\Inspector\Facade\Inspector::class,
 	
-You can optionally publish the configuration file with:
-	
-	php artisan vendor:publish
 
 
 ## <a name="configuration"></a>Configuration
-#### Exceptions Handler
 
-In order to include exceptions in Larevel Inspector responses and/or use Inspector as the default exceptions renderer, add the following line in the file <code>app/Exceptions/Handler.php</code> of your Laravel project:
+In order to use Inspector as the default exceptions renderer, add the following line in the file <code>app/Exceptions/Handler.php</code> of your Laravel project:
 
 ```php    
     public function render($request, Exception $e)
     {
-        \Inspector::handleException($e); 	// <= THIS LINE
+        \Inspector::renderException($e); 	// <= THIS LINE
         return parent::render($request, $e);
     }  
 ```      
 
-#### <a name="config"></a>Configuration options
-
-```php    
-// file "config/inspector.php" 
-
-return [
-	
-	// Use Laravel Inspector as your default exception renderer during development time (app.debug=true)
-	'exception_render' => true,
-
-	// Hide those keys form $_SERVER dump
-    'hide_server_keys' => [
-    	'APP_KEY','DB_HOST','DB_PASSWORD','DB_USERNAME','HTTP_COOKIE','MAIL_PASSWORD', 'REDIS_PASSWORD'],
-
-	];
-
-```
-Remember to publish the configutation file if you're going to modify these options.
   
 ## <a name="usage"></a>Usage
 Laravel inspector can be invoked using the Facade, the provided helper functions and a Blade directive:
@@ -160,7 +138,6 @@ You can inspect objects and variables with the following methods, each of which 
 |<code>error([string $description,] mixed $data)</code>|Outputs data with "error" format |
 |<code>warning([string $description,] mixed $data)</code>|Outputs data with "warning" format |
 |<code>success([string $description,] mixed $data)</code>|Outputs data with "success" format |
-|<code>log([string $description,] mixed $data)</code>|Outputs data with "log" format |
 |<code>table([string $description,] mixed $data)</code>|Outputs data inside a table |
 
 [comment]: $
@@ -226,7 +203,7 @@ Laravel Inspector includes a handy method <code>if()</code>to operate conditiona
 	li()->timeEnd('myTimer'); // do not worry if it has not been initialized
 	
 	// Dump and die
-	li()->if(!$whatIExpect)->idd($thatThing);
+	li()->if(!$whatIExpect)->dd($thatThing);
 	
 ```
 The <code>if()</code> function is not avalilable under the blade directive <code>@li</code>.
@@ -234,8 +211,7 @@ The <code>if()</code> function is not avalilable under the blade directive <code
 ## <a name="redirects"></a>Redirects
 Laravel Inspector handles redirects smoothly; showing the collectors bag for both, the original and the target views.
 
-## <a name="dump"></a>Dump
-### Dump and Die
+## <a name="dump"></a>Dump and die
 
 The <code>dd()</code> method (or <code>idd()</code> helper) will dump the entire collectors bag and terminates the script: 
 
@@ -253,11 +229,11 @@ The <code>dd()</code> method (or <code>idd()</code> helper) will dump the entire
 ```
 As the rest of the package, this feature intelligently determines how will be the format of the output, even if the call was performed from CLI. 
 
-### Dump an Entire Reponse
-Another way to do an inspection, but without interrupting the flow of the request, is by adding the parameter <code>laravel_inspector=dump</code> to the URLs:
+Another way to make an inspection, but without interrupting the flow of the request/response, is by adding the parameter <code>laravel_inspector=dump</code> to the URL:
   
-<code>http://mysite.dev/contacts?id=1&laravel_inspector=dump</code>
+<code>http://myapp.dev/contacts?id=1&laravel_inspector=dump</code>
  
+Thus, Laravel Inspector wont interrumpt your code excecution and be only activated by a terminable middleware.
 
 ## <a name="exceptions"></a>Exceptions
 
@@ -272,14 +248,14 @@ The function <code>addException()</code> will inspect our caught exceptions:
 
 ```
 
-Optionally, you can setup LI as the default Exception renderer during development time (app.debug=true). Refer to the [configuration options](#config) to do so. 
+Optionally, you can setup LI as the default exception renderer during development time (app.debug=true). Refer to the [configuration options](#config) to do so. 
 
 ## <a name="requests"></a>VIEW/AJAX/API requests, how it works 
  
 Laravel Inspector (LI) automatically detects the type of the request/response pair and determines the output format. If a View response is detected, the code needed to elegantly show the collected information in the browser console will be injected as a javascript into that view. Along with this, LI will also add a small piece of pure javascript code that serves as a generic http interceptor, which will examine subsequent AJAX calls looking for information injected by LI
 (this interceptor was tested under pure javascript, Angular 1.x ($http) and jQuery ($.ajax) and should work with any js framework). The interceptor also adds a header in each client AJAX call to let LI  know that the interceptor is present. Then, from Laravel side, during an AJAX request or a JSON response, LI will send a script to be interpreted (and properly rendered in the browsers console) by the interceptor, OR a pure Json if that header is not present and then assuming that the request was sent from cURL, a REST client app or something else.
 
-If you are developing, for example, an SPA and using Laravel only for the API but not to serve the web page/s, you can include the following code in your client app to take full advantage of all LI formatting features.
+If you are developing, for example, an SPA and using Laravel only for the API but not to serve the web page/s, you can include the following code in your client app to take full advantage of all formatting features of Laravel Inspector.
 
 ```javascript
 (function(XHR) {
@@ -294,7 +270,6 @@ If you are developing, for example, an SPA and using Laravel only for the API bu
 		this.setRequestHeader('Laravel-Inspector', 'interceptor-present');
 		function onReadyStateChange() {
 			if(self.readyState == 4 /* complete */) {
-		  
 				var response = JSON.parse(this.response);
 				if (typeof response.LARAVEL_INSPECTOR !== 'undefined') {
 					if(typeof response.LARAVEL_INSPECTOR === 'string')
