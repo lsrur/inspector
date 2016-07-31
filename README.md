@@ -9,7 +9,7 @@ Laravel 5.x package to inspect, debug and profile your server side code using yo
 * [Timers](#timers)
 * [Conditionals](#conditionals)
 * [Redirects](#redirects)
-* [Dump & Die](#dump)
+* [Dump](#dump)
 * [Exception handling](#exceptions)
 * [VIEW/AJAX/API requests, how it works](#requests)
 * [License](#license)
@@ -35,7 +35,7 @@ Laravel 5.x package to inspect, debug and profile your server side code using yo
 |:-:|:-:|
 |Redirection|API/Ajax calls|
 
-|[![](https://s31.postimg.org/7be16rknv/image.png)](https://s31.postimg.org/inqmojtcp/image.png)|[![](https://s32.postimg.org/osf9dbdrp/image.png)](https://s32.postimg.org/mnuwc8c4z/image.png)|
+|[![](https://s31.postimg.org/7be16rknv/image.png)](https://s31.postimg.org/inqmojtcp/image.png)|[![](https://s31.postimg.org/nqy57iynf/image.png)](https://s31.postimg.org/gayvlqay1/image.png)|
 |:-:|:-:|
 |Using Postman REST client app|Using CLI|
 
@@ -234,9 +234,10 @@ The <code>if()</code> function is not avalilable under the blade directive <code
 ## <a name="redirects"></a>Redirects
 Laravel Inspector handles redirects smoothly; showing the collectors bag for both, the original and the target views.
 
-## <a name="dump"></a>Dump and Die
+## <a name="dump"></a>Dump
+### Dump and Die
 
-The <code>idd()</code> method/helper will dump the entire collectors bag and terminates the script: 
+The <code>dd()</code> method (or <code>idd()</code> helper) will dump the entire collectors bag and terminates the script: 
 
 ```php	
 	\Inspector::dd();
@@ -250,7 +251,13 @@ The <code>idd()</code> method/helper will dump the entire collectors bag and ter
 
 	
 ```
-As the rest of the package, this feature intelligently determine how will be the format of the output, even if the call was performed from CLI. 
+As the rest of the package, this feature intelligently determines how will be the format of the output, even if the call was performed from CLI. 
+
+### Dump an Entire Reponse
+Another way to do an inspection, but without interrupting the flow of the request, is by adding the parameter <code>laravel_inspector=dump</code> to the URLs:
+  
+<code>http://mysite.dev/contacts?id=1&laravel_inspector=dump</code>
+ 
 
 ## <a name="exceptions"></a>Exceptions
 
