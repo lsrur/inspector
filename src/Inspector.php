@@ -10,7 +10,8 @@ class inspector
 
     private $is_on = true;
     private $condition;
-    public $response;
+    private $response;
+    private $request;
     private $injectorType;
     private $collectorMan;
 
@@ -18,12 +19,20 @@ class inspector
     {
         $this->collectorMan = new CollectorManager($this);
     }
+    
+    public function analize($request, $response)
+    {
+        $this->response = $response;
+        $this->request = $request;
+        
+        $this->dd(206,true);
+    }
 
     /**
      * Show inspector full screen page and die
      * @return [type] [description]
      */
-    public function dd($status = 206) // partial content?
+    public function dd($status = 206, $analizeView=false) // partial content?
     {
         $time = microtime(true);
         $memoryUsage = formatMemSize(memory_get_usage());
@@ -50,11 +59,12 @@ class inspector
             try {
                 $view = (string)view('inspector::fullscreen', 
                 [
+                    'analizeView'  => $analizeView,
                     'collectors'   => $collectorData,
                     'memoryUsage'  => $memoryUsage,
                     'time'         => round(($time-LARAVEL_START)*1000,2)
                 ]);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 dump($e);
                 die();
             }
@@ -118,11 +128,7 @@ class inspector
         }
 
         return call_user_func_array(array(&$collector, $method), $args);
-
-//    	$this->onMethodExecuted(substr(strrchr(get_class($collector), "\\"), 1), $method);
     }
-
-
 
     /**
      * Determine the injector type
@@ -147,6 +153,11 @@ class inspector
     public function getResponse()
     {
         return $this->response;
+    }
+
+    public function getRequest()
+    {
+        return $this->request;
     }
     /**
      * Inject Inspector into Response

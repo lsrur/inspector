@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, shrink-to-fit=no, initial-scale=1">
     <title>Laravel Inspector</title>
     	@include("inspector::fs_vendor")
-
+<link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.5.0/styles/default.min.css">
+<script src="//cdn.jsdelivr.net/highlight.js/9.5.0/highlight.min.js"></script>
     <style type="text/css">
     pre {
         border-radius: 0;
@@ -253,6 +254,11 @@
                         Laravel Inspector
                     </div>
                 </li>
+                @if($analizeView)
+                <li>
+                    <a class="menu-item " href="#" id='panel-view-item' data-panel='panel-view'>CONTENT</a>
+                </li>
+                @endif
                 @foreach($collectors as $key=>$value)
                     @if($value['count'])
                     <li>
@@ -264,6 +270,9 @@
                     </li>   
                     @endif
                 @endforeach
+                <li>
+                    <a class="menu-item " href="#" id='panel-phpinfo-item' data-panel='panel-phpinfo'>PHP INFO</a>
+                </i>
                 <li class="sidebar-stats" style="border-bottom: 0">
                      <div style="margin-top:1px;line-height: 1.8em; font-weight:300;color:white; padding-left: 10px">
                         <div style="height: 23px; font-size: 18px">{{$time}}ms</div>
@@ -282,6 +291,9 @@
             </ul>
         </div>
         <div id="page-content-wrapper">
+            @if($analizeView)
+            @include('inspector::fs_view')  
+            @endif
             @include('inspector::fs_messages')
             @include('inspector::fs_exceptions')
             @include('inspector::fs_sqls')
@@ -290,6 +302,9 @@
             @include('inspector::fs_request')
             @include('inspector::fs_routes')
             @include('inspector::fs_timers')
+            @include('inspector::fs_phpinfo')
+            @include('inspector::fs_response')
+
         </div>
     </div>
     <div class="modal fade" id="table-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -309,12 +324,16 @@
         </div>
     </div>
     <script>
-    @foreach($collectors as $key=>$value)
-        @if($value['count']>0)
-            var activePanel = '#panel-{{$key}}';
-            @break
+        @if($analizeView)
+            var activePanel = '#panel-view';
+        @else
+            @foreach($collectors as $key=>$value)
+                @if($value['count']>0)
+                    var activePanel = '#panel-{{$key}}';
+                    @break
+                @endif
+            @endforeach
         @endif
-    @endforeach
         $(activePanel).show();
         $(activePanel+'-item').addClass('active');
         $(".menu-item").click(function(e) {

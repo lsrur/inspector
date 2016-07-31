@@ -133,18 +133,21 @@ class MessageCollector extends BaseCollector
         }
  		$name = isset($p2) ? $p1 : $p2;
 		$value = isset($p2) ? $p2 : $p1;
-        if($style == 'table' && !is_array($value))
-        {
-            if(get_class($value) == "Illuminate\Pagination\LengthAwarePaginator")
+         
+        if($style == 'table')
+         {
+            if(!is_array($value))
             {
-                $value = $value->getCollection()->toArray();
-            } elseif( in_array('toArray', get_class_methods(get_class($value)) ))
-            {
-                $value = $value->toArray();
-            } 
-
+                if(get_class($value) == "Illuminate\Pagination\LengthAwarePaginator")
+                {
+                    $value = $value->getCollection()->toArray();
+                } elseif( in_array('toArray', get_class_methods(get_class($value)) ))
+                {
+                    $value = $value->toArray();
+                } 
+            }
+            $value = json_decode(json_encode($value),true);
         }
-//        dd($style,$value);
         $name = isset($name) ? $name : '';
         $this->stack[] = array_merge(['name'=>$name,'value'=>$value, 'style'=>$style], $extra);     
     }

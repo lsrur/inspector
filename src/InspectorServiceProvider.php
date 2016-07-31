@@ -14,6 +14,7 @@ class InspectorServiceProvider extends ServiceProvider
     public function boot()
     {
  
+   
 
         app()->booted(function(){
        

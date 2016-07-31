@@ -29,6 +29,7 @@ class ResponseCollector extends BaseCollector
 		$resp = app('Inspector')->getResponse();
 		if(isset($resp))
 		{
+
 			$this->responseData['status'] = $resp->status();
 			$this->responseData['headers'] = $resp->headers->all();
 			$this->responseData['class'] = get_class($resp); 

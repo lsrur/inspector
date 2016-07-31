@@ -21,7 +21,12 @@ $exceptions = $collectors['Exceptions']['items'];$counter=1;
 								<span style="margin-left:5px;font-size:11px; position:relative; top:-2px"class="label label-danger">UNCAUGHT</span>
 							@endif
 						</h4>
-						<h3 style="margin-bottom: 15px">{{$exception['message']}}</h3>
+						<h3 style="margin-bottom: 15px">
+							{{$exception['message']}}
+							@if(isset($exception['code']) && $exception['code']!='0')
+								({{$exception['code']}})
+							@endif
+						</h3>
 						@foreach($exception['files'] as $file)
 							<h4>{{ $file['fileName']}} #{{$file['line'] }}
 								@if(isset($file['tag']) && $file['tag']=='my code')

@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Auth;
 
 class Inspector
 {
-
     public function handle($request, Closure $next)
     {
         try {
@@ -15,11 +14,22 @@ class Inspector
         } catch (Exception $e) {
             $response = $this->handleException($request, $e);
         }
-
-        define('INSPECTOR_START', microtime(true));
+        
         if(\Inspector::isOn())
-	       	\Inspector::injectInspection($request, $response);
+	    {
+            if($request->get('laravel_inspector')=='dd')
+            {
+                \inspector::dd();
+            } elseif($request->get('laravel_inspector')=='off') {
+                // do nothing
+            } elseif($request->get('laravel_inspector')=='dump') {
+                
+                \inspector::analize($request, $response);
 
+            } else {
+                \Inspector::injectInspection($request, $response);                
+            }
+        }
         return $response;
     }
 

@@ -29,7 +29,7 @@ if (!function_exists('inspect')) {
 };
 
 if (!function_exists('idd')) {
-    
+        
     function idd($value=null)
     {
         $inspector = app('Inspector');

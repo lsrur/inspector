@@ -28,7 +28,7 @@ class ExceptionCollector extends BaseCollector
         $styleClass = 'font-size:10px; line-height:1.8em;';
         $styleMessage = 'font-size:10px; color:red; line-height:1.8em;';
         $styleFile = 'font-size:10px; font-weight:normal; line-height:1.8em;';
-   // dd($this->exceptions);
+
         foreach ($this->exceptions as $e) {
             if($e['caught'])
             {

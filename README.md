@@ -94,7 +94,7 @@ In order to include exceptions in Larevel Inspector responses and/or use Inspect
 #### <a name="config"></a>Configuration options
 
 ```php    
-// file "app/config/inspector.php" 
+// file "config/inspector.php" 
 
 return [
 	
@@ -155,13 +155,13 @@ You can inspect objects and variables with the following methods, each of which 
 
 |Method|Description |
 |----|-----|
-|log([string  $description,] mixed $data)|Outputs data with "log" format |
-|info([string $description,] mixed $data)|Outputs data with "info" format |
-|error([string $description,] mixed $data)|Outputs data with "error" format |
-|warning([string $description,] mixed $data)|Outputs data with "warning" format |
-|success([string $description,] mixed $data)|Outputs data with "success" format |
-|log([string $description,] mixed $data)|Outputs data with "log" format |
-|table([string $description,] mixed $data)|Outputs data inside a table |
+|<code>log([string  $description,] mixed $data)</code>|Outputs data with "log" format |
+|<code>info([string $description,] mixed $data)</code>|Outputs data with "info" format |
+|<code>error([string $description,] mixed $data)</code>|Outputs data with "error" format |
+|<code>warning([string $description,] mixed $data)</code>|Outputs data with "warning" format |
+|<code>success([string $description,] mixed $data)</code>|Outputs data with "success" format |
+|<code>log([string $description,] mixed $data)</code>|Outputs data with "log" format |
+|<code>table([string $description,] mixed $data)</code>|Outputs data inside a table |
 
 [comment]: $
 
@@ -239,8 +239,8 @@ Laravel Inspector handles redirects smoothly; showing the collectors bag for bot
 The <code>idd()</code> method/helper will dump the entire collectors bag and terminates the script: 
 
 ```php	
-	\Inspector::idd();
-	li()->idd();
+	\Inspector::dd();
+	li()->dd();
 	
 	// or simply
 	idd();
@@ -260,7 +260,7 @@ The function <code>addException()</code> will inspect our caught exceptions:
 	try {
 		...
 	} catch (Exception $e) {
-		li()->addExceptin($e);
+		li()->addException($e);
 	}
 
 ```
