@@ -1,7 +1,8 @@
 <?php 
+if(!is_array($data[0])) return;
 $keys = array_keys($data[0]);$counter=0;
 ?>
-<div class="table-panel" style="max-height:350px; overflow-y: auto">
+<div class="table-panel" style="max-height:332px; overflow-y: auto">
 <table class="table table-striped" style="font-size: 14px">
 	<tr>
 	<td style="color:#bcbcbc">#/{{count($data)}}</td>

@@ -286,7 +286,7 @@
                         @endif
                         <div style="height: 23px; font-size: 18px">{{$memoryUsage}} / {{ini_get('memory_limit')}}B</div>
                         <div style="font-size:12px; height: 34px;">USED RAM/LIMIT</div>
-                        <div style="height: 23px; font-size: 18px; overflow: hidden;">{{app()->version()}} / {{phpversion()}}</div>
+                        <div style="height: 23px; font-size: 18px;overflow: hidden;">{{app()->version()}} / {{phpversion()}}</div>
                         <div style="font-size:12px; height: 34px;">LARAVEL/PHP VERSIONS</div>
                         <br> 
                     </div>

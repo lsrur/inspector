@@ -21,7 +21,7 @@ Laravel 5.x package to inspect, debug and profile your server side code using yo
 |:-:|:-:|
 |Messages|Exceptions|
 
-|[![](https://s31.postimg.org/kw07s5b2z/image.png)](https://s31.postimg.org/hcea2c8d5/image.png)|[![](https://s31.postimg.org/o49aixmqj/image.png)](https://s31.postimg.org/8vjd55t21/image.png)|
+|[![](https://s31.postimg.org/748cxdysb/image.png)](https://s31.postimg.org/yrl2bhjyx/image.png)|[![](https://s31.postimg.org/o49aixmqj/image.png)](https://s31.postimg.org/8vjd55t21/image.png)|
 |:-:|:-:|
 |idd() - Dump and die on steroids|idd() SQLs page|
 
