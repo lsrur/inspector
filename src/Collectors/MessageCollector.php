@@ -5,14 +5,19 @@ namespace Lsrur\Inspector\Collectors;
 class MessageCollector extends BaseCollector
 {
     public $title = 'Messages';
-
 	private $stack = [];
 
+    /**
+     * @return int
+     */
 	public function count()
 	{
 		return count($this->stack);
 	}
 
+    /**
+     * @return string
+     */
 	public function getScript()
 	{
 		$script = "console.group('MESSAGES');"; 
@@ -45,9 +50,11 @@ class MessageCollector extends BaseCollector
 		return $script;
 	}
 
+    /**
+     * @return Array
+     */
 	public function getPreJson()
 	{
-
         $result = []; $group='';$g=0;
         foreach ($this->stack as $item) {
         	switch ($item['style']) {
@@ -61,7 +68,7 @@ class MessageCollector extends BaseCollector
         			break;
         		default:
         			$keyName = $group == '' ? '' : $group.'.';
-        			$name = $item['name'] ?? 'nn_'.(++$g);
+        			$name = $item['name'] ? $item['name'] : 'nn_'.(++$g);
         			$keyName .= str_slug($item['style'].'_'.$name,'_');
                		if(isset($item['value']))
                     	array_set($result, $keyName, $item['value']);
@@ -124,13 +131,10 @@ class MessageCollector extends BaseCollector
      */
     public function add($style, $p1, $p2=null, $extra=[], $traceSteps = 4 )
     {
-   
  		$extra['trace'] = $this->getTrace($traceSteps);
         if(starts_with($extra['trace'], 'PhpEngine.php'))
-        {
             $extra['trace'] = 'BLADE';
-            // TODO: look for view name?
-        }
+ 
  		$name = isset($p2) ? $p1 : $p2;
 		$value = isset($p2) ? $p2 : $p1;
          

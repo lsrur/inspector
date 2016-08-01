@@ -1,7 +1,8 @@
 <?php 
 	$sql = $collectors['SQLs']['items'];
-	//dd($sql);
-$i=0; ?>
+	$lastFileName = '';
+	$i=0; 
+?>
 <div class="container-fluid inspector-panel" id='panel-SQLs'>
 	@foreach($sql['items'] as $item)		
 	<div style="border:1px solid #ddd; box-shadow: 0px 0px 2px #ccc;">
@@ -17,19 +18,19 @@ $i=0; ?>
 				<pre style="background: #fff; color: #c7254e; font-size:15px;border:0">{{$item['sql']}}</pre>
 			</div>
 			<div style="padding:5px; border-top:1px solid #ddd;background-color: #fafafa" >
-				@foreach($item['files'] as $file)
+				<?php  $file=$item['files'][0] ?>			
 					<strong>{{$file['fileName']}} #{{$file['line']}}</strong><span>
 					&nbsp;
-						@if(isset($file['tag']) && $file['tag']=='my code')
-							<span style="margin-left:5px;font-size:11px;position: relative; top: -1px" class="label label-danger">MY CODE</span>
-						@endif
-						@if(isset($file['tag']) && $file['tag']=='vendor')
-							<span style="margin-left:5px;font-size:11px;position: relative; top: -1px" class="label label-warning">VENDOR</span>
-						@endif
-						<pre style="background: #fafafa; border:0">{!! $file['src'] !!}</pre>		
-					
-					
-				@endforeach
+					@if(isset($file['tag']) && $file['tag']=='my code')
+						<span style="margin-left:5px;font-size:11px;position: relative; top: -1px" class="label label-danger">MY CODE</span>
+					@endif
+					@if(isset($file['tag']) && $file['tag']=='vendor')
+						<span style="margin-left:5px;font-size:11px;position: relative; top: -1px" class="label label-warning">VENDOR</span>
+					@endif
+					@if($lastFileName != $file['fileName'].$file['line'])	
+						<pre style="background: #fafafa; border:0">{!! $file['src'] !!}</pre>	
+					<?php $lastFileName = $file['fileName'].$file['line']; ?>	
+					@endif
 			</div>	
 		</div>
 

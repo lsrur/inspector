@@ -104,10 +104,10 @@ Laravel inspector can be invoked using the Facade, the provided helper functions
 	li()->error(...);
 	li()->group('myGroup');
 	
-	// "inspect" function makes an "Inspector::log($v)" for each provided parameter
+	// "inspect" function makes an "Inspector::log($v)" for each passed argument
 	inspect($var1, $var2, $var3, ...);
 	
-	// Dump and die using Laravel Inspector function
+	// Dump and die using Laravel Inspector magic
 	idd();
 	idd($var1, $var2);
 	
@@ -126,7 +126,6 @@ Laravel inspector can be invoked using the Facade, the provided helper functions
 Anyway, you can temporarily turn Inspector off (just for the current request) with:
 
 	li()->turnOff();
-	
 
 ## <a name="messages"></a>Messages
 You can inspect objects and variables with the following methods, each of which has its own output format:
@@ -184,7 +183,7 @@ Examples:
 
 ```php	
 	li()->timer("MyTimer");
-	// my code
+	// ...
 	li()->timeEnd("MyTimer");
 	
 	li()->timeStamp('Elapsed time from LARAVEL_START here'); 
@@ -233,7 +232,7 @@ Another way to make an inspection, but without interrupting the flow of the requ
   
 <code>http://myapp.dev/contacts?id=1&laravel_inspector=dump</code>
  
-Thus, Laravel Inspector wont interrumpt your code excecution and be only activated by a terminable middleware.
+Thus, Laravel Inspector wont be activated until the a terminable middleware is reached.
 
 ## <a name="exceptions"></a>Exceptions
 

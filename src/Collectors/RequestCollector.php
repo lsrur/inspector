@@ -19,9 +19,9 @@ class RequestCollector extends BaseCollector
 		$this->request = [
 			'url'		=> request()->url(),
 			'method'	=> request()->method(),
-			'headers'	=> request()->header(),
 			'input'		=> request()->input(),
-			'action'	=> \Route::getCurrentRoute()->getAction()
+			'action'	=> \Route::getCurrentRoute()->getAction(),
+			'headers'	=> request()->header(),
 		];
 	}
 

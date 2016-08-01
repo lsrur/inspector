@@ -11,6 +11,9 @@
     <style type="text/css">
     pre {
         border-radius: 0;
+        border: 0px;
+        padding: 0px 10px !important;
+        margin:0px !important;
     }
 
     body {
