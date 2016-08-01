@@ -9,7 +9,6 @@ class inspector
 {
 
     private $is_on = true;
-    private $condition;
     private $response;
     private $request;
     private $injectorType;
@@ -114,17 +113,6 @@ class inspector
     }
 
     /**
-     * Conditional logging
-     * @param  bool   $condition [description]
-     * @return [type]            [description]
-     */
-    public function if (bool $condition) {
-     $this->condition = $condition===false ? $condition : null;
-
-     return $this;
- }
-
-    /**
      * Magic methods
      * 
      * @param  [type] $method [description]
@@ -133,12 +121,6 @@ class inspector
      */
     public function __call($method, $args)
     {
-        // Apply condition
-        if ($this->condition === false) {
-            $this->condition = null;
-            return;
-        }
-        $this->condition = null;
         // if the called is a MessageCollector method, redirect to MessageCollector->add  
         if (in_array($method, ['table', 'info', 'warning', 'error', 'log', 'success'])) {
             $collector = $this->collectorMan->get('MessageCollector');

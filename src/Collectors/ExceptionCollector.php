@@ -90,7 +90,7 @@ class ExceptionCollector extends BaseCollector
 
     public function b_addException($exception)
     {
-        $this->b_handleException($exception, true);
+        $this->handleException($exception, true);
     }
 
     public function b_renderException($exception)

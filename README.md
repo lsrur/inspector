@@ -7,7 +7,6 @@ Laravel 5.x package to inspect, debug and profile your server side code using yo
 * [Usage](#usage)
 * [Messages](#messages)
 * [Timers](#timers)
-* [Conditionals](#conditionals)
 * [Redirects](#redirects)
 * [Dump and die](#dump)
 * [Exceptions](#exceptions)
@@ -57,7 +56,7 @@ Laravel 5.x package to inspect, debug and profile your server side code using yo
 [comment]:$  
 ## <a name="installation"></a>Installation
 
-**The package was developed using PHP 7 so there may be some -minor- incompatibilities with PHP 5.4** 
+**This package was tested under PHP 5.6, PHP 7, Laravel 5.2 and Laravel 5.3-Dev** 
 
 Installing the package via composer:
 
@@ -189,24 +188,6 @@ Examples:
 	li()->timeStamp('Elapsed time from LARAVEL_START here'); 
 ```
 
-## <a name="conditionals"></a>Conditionals
-Laravel Inspector includes a handy method <code>if()</code>to operate conditionally:
-
-```php	
-	li()->if($count > 100)->warning('too much?', $count);
-	
-	li()->if($itsHappeningAgain)->time('myTimer');
-	// ...
-	li()->if($itsHappeningAgain)->timeEnd('myTimer');
-	// OR
-	li()->timeEnd('myTimer'); // do not worry if it has not been initialized
-	
-	// Dump and die
-	li()->if(!$whatIExpect)->dd($thatThing);
-	
-```
-The <code>if()</code> function is not avalilable under the blade directive <code>@li</code>.
-
 ## <a name="redirects"></a>Redirects
 Laravel Inspector handles redirects smoothly; showing the collectors bag for both, the original and the target views.
 
@@ -247,7 +228,7 @@ The function <code>addException()</code> will inspect our caught exceptions:
 
 ```
 
-Optionally, you can setup LI as the default exception renderer during development time (app.debug=true). Refer to the [configuration options](#config) to do so. 
+Optionally, you can setup LI as the default exception renderer during development time (app.debug=true). Refer to the [configuration](#configuration) to do so. 
 
 ## <a name="requests"></a>VIEW/AJAX/API requests, how it works 
  

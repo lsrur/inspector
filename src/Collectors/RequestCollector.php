@@ -16,13 +16,18 @@ class RequestCollector extends BaseCollector
 	
 	public function __construct()
 	{
-		$this->request = [
-			'url'		=> request()->url(),
-			'method'	=> request()->method(),
-			'input'		=> request()->input(),
-			'action'	=> \Route::getCurrentRoute()->getAction(),
-			'headers'	=> request()->header(),
-		];
+		if(\App::runningInConsole())
+		{
+			$this->request = [];
+		} else {
+			$this->request = [
+				'url'		=> request()->url(),
+				'method'	=> request()->method(),
+				'input'		=> request()->input(),
+				'action'	=> \Route::getCurrentRoute()->getAction(),
+				'headers'	=> request()->header(),
+			];
+		}
 	}
 
 	public function getPreJson()

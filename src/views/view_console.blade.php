@@ -2,11 +2,8 @@
 <script type="text/javascript">
 @if(isset($redirectData))
 	{!!$redirectData !!}
-			
 @endif
 {!!$collectorsData !!}
-console.groupEnd();
-
 (function(XHR) {
 	"use strict";
 
@@ -28,8 +25,6 @@ console.groupEnd();
 					} else {
 						console.log('LARAVEL INSPECTOR ', response);	
 					 }
-					 console.log(this);
-//					 this.response = {'ok':1};
 				 }   
 			}
 			if(oldOnReadyStateChange) {
@@ -48,7 +43,5 @@ console.groupEnd();
 		send.call(this, data);
 	}
 })(XMLHttpRequest);
-
 </script>
 <!-- LARAVEL INSPECTOR END -->
-

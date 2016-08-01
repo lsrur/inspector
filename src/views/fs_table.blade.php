@@ -2,7 +2,7 @@
 $keys = array_keys($data[0]);$counter=0;
 ?>
 <div class="table-panel" style="max-height:350px; overflow-y: auto">
-<table class="table table-striped">
+<table class="table table-striped" style="font-size: 14px">
 	<tr>
 	<td style="color:#bcbcbc">#/{{count($data)}}</td>
 	@foreach($keys as $key)

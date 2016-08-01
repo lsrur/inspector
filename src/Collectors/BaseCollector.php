@@ -5,22 +5,18 @@ namespace Lsrur\Inspector\Collectors;
 
 abstract class BaseCollector
 {
-
     public $title;
     public $showCounter = true;
-
-    private $defaultStyle = "font-size:12px; line-height:1.7em";
+    private $defaultStyle = "font-size:10px; line-height:1.5em;";
 
     protected function genericToScript($data)
     {
         $tit = strtoupper(str_slug($this->title));
         $result = "console.groupCollapsed('$tit');";
-
         foreach ($data as $key => $value) 
         {
             $result .= $this->cl('log', $key.':', $value);
         }
-
         $result .= "console.groupEnd();";
         return $result;
     }
@@ -40,14 +36,21 @@ abstract class BaseCollector
         return "console.table(".json_encode($data).");";
     }
 
+    /**
+     * "Console log" helper     
+     * @param  string $cmd   
+     * @param  string $title 
+     * @param  mixed $data  
+     * @return string        
+     */
     protected function cl($cmd, $title, $data)
     {
         if(substr($title,-1)!==':') $title.=':';
         $styles = [
-            'info' => 'font-size:10px;line-height:1.8em;border-radius:3px;padding:3px 5px;color:white; background-color: #3498DB',
-            'warning' => 'font-size:10px;line-height:1.8em;border-radius:3px;padding:3px 5px;color:white; background-color: #F39C12',
-            'success' => 'font-size:10px;line-height:1.8em;border-radius:3px;padding:3px 5px;color:white; background-color: #18BC9C',
-            'error' => 'font-size:10px;line-height:1.8em;border-radius:3px;padding:3px 5px;color:white; background-color: #E74C3C',
+            'info' => $this->defaultStyle.'border-radius:3px;padding:2px 3px;color:white; background-color: #3498DB',
+            'warning' => $this->defaultStyle.'border-radius:3px;padding:2px 3px;color:white; background-color: #F39C12',
+            'success' => $this->defaultStyle.'border-radius:3px;padding:2px 3px;color:white; background-color: #18BC9C',
+            'error' => $this->defaultStyle.'border-radius:3px;padding:2px 3px;color:white; background-color: #E74C3C',
         ];
         
         if(in_array($cmd, ['info','warning', 'success', 'error']))
@@ -59,6 +62,7 @@ abstract class BaseCollector
         }
         return "console.log(".$title.",".json_encode($data)."); ";
     }
+
     /**
      * Return file and line number
      * @param  integer $steps 
@@ -71,11 +75,13 @@ abstract class BaseCollector
         return $file." #".debug_backtrace()[$steps]['line'];
     }
     
-
-    // refactor this to one file 
+    /**  
+     *  Extract source code file 
+     * @param  array $files 
+     * @return array        
+     */
   	protected function getSourceCode($files)
-    {
-        
+    {        
         for($j=0;$j<count($files);$j++)
         {
             $src=[]; $txt='';
@@ -85,11 +91,9 @@ abstract class BaseCollector
                 $fromLine = $files[$j]['line'] - 3;
                 $toLine = $fromLine + 6;
                 $i=0;
-
                 $handle = fopen($sourceFile, "r");
                 if ($handle) {
                     $src[] = '<?php'.PHP_EOL;
-
                     while (($line = fgets($handle)) !== false) 
                     {
                         $i++; 
@@ -119,9 +123,9 @@ abstract class BaseCollector
                 }
             }        
         } 
-
         return $files;
     }
+
     protected function removeSrc(&$items)
     {
         foreach ($items as &$item) 
@@ -133,19 +137,19 @@ abstract class BaseCollector
         }
     }
 
+    /**
+     * Escape quotes
+     * @param  string $str 
+     * @return string      
+     */
     protected function e($str)
     {
         return str_replace("'",'`', $str);
     }
 
-
     abstract protected function get();
     abstract protected function getPreJson();
     abstract protected function getScript();
-
- //   abstract protected function getPreJson();
-
-//    abstract protected function getScript
-   // abstract protected function count();
+    abstract protected function count();
  
 }

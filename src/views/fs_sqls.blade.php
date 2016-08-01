@@ -14,8 +14,8 @@
 		</div>
 		
 		<div>	
-			<div style="padding:15px 5px 5px 5px">
-				<pre style="background: #fff; color: #c7254e; font-size:15px;border:0">{{$item['sql']}}</pre>
+			<div style="padding:10px">
+				<code style="background: #fff; color: #c7254e; font-size:14px; line-height: 1.6em; border:0">{{$item['sql']}}</code>
 			</div>
 			<div style="padding:5px; border-top:1px solid #ddd;background-color: #fafafa" >
 				<?php  $file=$item['files'][0] ?>			
