@@ -1,5 +1,4 @@
 # Laravel Inspector
-Laravel 5.x package to inspect, debug and profile your server side code using your browser's console.
 
 * [At a Glance](#glance)
 * [Installation](#installation)

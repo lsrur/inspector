@@ -195,7 +195,7 @@ class inspector
                 $collectorsData = $this->collectorMan->getScripts('inspector', 'VIEW:'.$response->getOriginalContent()->getName(), $response->getStatusCode());
                 // if there is a flashed inspection (redirect), append it to this response
                 $redirectData = null;
-                if ($request->session()->has('LARAVEL_INSPECTOR_REDIRECT')) {
+                if(isset($request->session ) && $request->session()->has('LARAVEL_INSPECTOR_REDIRECT')) {
                     $redirectData = $request->session()->get('LARAVEL_INSPECTOR_REDIRECT');
                     session()->forget('LARAVEL_INSPECTOR_REDIRECT');
                 }
@@ -205,7 +205,6 @@ class inspector
                     'collectorsData' => $collectorsData,
                     ]);
 
-            //	$inspectionBag = str_replace(array("\r\n", "\r", "\n", "\t"), '', $inspectionBag);
                 $content = $response->getContent();
                 // Ensure string content
                 if (is_string($content)) {

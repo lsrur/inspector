@@ -7,7 +7,7 @@ abstract class BaseCollector
 {
     public $title;
     public $showCounter = true;
-    private $defaultStyle = "font-size:10px; line-height:1.5em;";
+    private $defaultStyle = "font-size:11px; line-height:1.5em;";
 
     protected function genericToScript($data)
     {
