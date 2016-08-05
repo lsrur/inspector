@@ -90,12 +90,19 @@ class ExceptionCollector extends BaseCollector
 
     public function b_addException($exception)
     {
-        $this->handleException($exception, true);
+           $this->handleException($exception, true);
     }
 
     public function b_renderException($exception)
     {
+        // forgive exceptions from formrequest validations
+        if(get_class($exception) == 'Illuminate\Http\Exception\HttpResponseException' &&
+            ends_with($exception->getFile(), 'FormRequest.php')) {
+            return;
+        }
+        
         $this->handleException($exception, false);
+
     }
 
     public function handleException($exception, $caught=false)

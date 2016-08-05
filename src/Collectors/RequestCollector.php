@@ -24,12 +24,12 @@ class RequestCollector extends BaseCollector
 				'url'		=> request()->url(),
 				'method'	=> request()->method(),
 				'input'		=> request()->input(),
-				'action'	=> \Route::getCurrentRoute()->getAction(),
+				'action'	=> \Route::getCurrentRoute() !== null ? \Route::getCurrentRoute()->getAction() : null,
 				'headers'	=> request()->header(),
 			];
 		}
 	}
-
+	
 	public function getPreJson()
 	{
 		return $this->get();
