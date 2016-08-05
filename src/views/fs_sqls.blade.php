@@ -18,6 +18,7 @@
 				<code style="background: #fff; color: #c7254e; font-size:14px; line-height: 1.6em; border:0">{{$item['sql']}}</code>
 			</div>
 			<div style="padding:5px; border-top:1px solid #ddd;background-color: #fafafa" >
+				@if(count($item['files']))
 				<?php  $file=$item['files'][0] ?>			
 					<strong>{{$file['fileName']}} #{{$file['line']}}</strong><span>
 					&nbsp;
@@ -31,6 +32,7 @@
 						<pre style="background: #fafafa; border:0">{!! $file['src'] !!}</pre>	
 					<?php $lastFileName = $file['fileName'].$file['line']; ?>	
 					@endif
+				@endif
 			</div>	
 		</div>
 
