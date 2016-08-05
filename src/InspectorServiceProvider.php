@@ -18,7 +18,9 @@ class InspectorServiceProvider extends ServiceProvider
 
         app()->booted(function(){
        
-           define('LARAVEL_BOOTED', microtime(true));
+            if(!defined('LARAVEL_BOOTED')) {
+                define('LARAVEL_BOOTED', microtime(true));
+            }
         });  
 
         // \View::composer('*', function($view)
