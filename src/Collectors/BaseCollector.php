@@ -99,10 +99,12 @@ abstract class BaseCollector
                         $i++; 
                         if($i>=$fromLine && $i<=$toLine)
                         {     
-                            $txt .= $i.':'.$line;
+                            $txt .= $i.':'.substr($line,0,-1).PHP_EOL;
                             if($i == $files[$j]['line'])
                             {
+
                                 $src [] = '-@'.$i.':'.substr($line,0,-1).'@-';
+                                //$src [] = '-@'.$i.':'.$line.'@-';
                             } else {
                   
                                 $src [] = $i.':'.$line;
