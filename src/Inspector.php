@@ -104,12 +104,12 @@ class inspector
     }
 
     /**
-     * InOn
+     * IsOn
      * @return boolean
      */
     public function isOn()
     {
-        return config('app.debug') && $this->is_on;
+        return config('app.debug') && $this->is_on && env('APP_ENV') != 'testing';
     }
 
     /**
