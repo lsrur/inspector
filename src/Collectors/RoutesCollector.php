@@ -26,8 +26,8 @@ class RoutesCollector extends BaseCollector
 				'name'	=> $name,
 				'action'=> $action,
 				'uri'	=> $route->getUri(),
-				'middleware' => is_array($route->getAction()['middleware']) ? 
-					implode(',',$route->getAction()['middleware']) : $route->getAction()['middleware']
+				'middleware' => isset($route->getAction()['middleware']) && is_array($route->getAction()['middleware']) ?
+					implode(',',$route->getAction()['middleware']) : isset($route->getAction()['middleware']) ? $route->getAction()['middleware'] : ''
 				];
 		}
 	}
