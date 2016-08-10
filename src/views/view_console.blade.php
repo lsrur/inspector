@@ -15,7 +15,7 @@
 		var url = this._url;
 		this.setRequestHeader('Laravel-Inspector', 'interceptor-present');
 		function onReadyStateChange() {
-			if(self.readyState == 4 /* complete */) {
+			if(self.readyState == 4 /* complete */ && this.getResponseHeader("Content-Type") == "application/json") {
 		  		
 				var response = JSON.parse(this.response);
 				if (typeof response.LARAVEL_INSPECTOR !== 'undefined') {
