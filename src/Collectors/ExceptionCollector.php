@@ -90,7 +90,9 @@ class ExceptionCollector extends BaseCollector
 
     public function b_addException($exception)
     {
-           $this->handleException($exception, true);
+        
+        return $this->handleException($exception, true);
+        
     }
 
     public function b_renderException($exception)
@@ -107,6 +109,7 @@ class ExceptionCollector extends BaseCollector
 
     public function handleException($exception, $caught=false)
     {
+
         if(! app('Inspector')->isOn()) return;
 
         $files = [['file'=>$exception->getFile(), 'line'=>$exception->getLine()]];

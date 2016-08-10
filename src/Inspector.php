@@ -109,6 +109,7 @@ class inspector
      */
     public function isOn()
     {
+
         return config('app.debug') && $this->is_on && env('APP_ENV') != 'testing';
     }
 
@@ -121,6 +122,7 @@ class inspector
      */
     public function __call($method, $args)
     {
+        if(! $this->isOn()) return;
         // if the called is a MessageCollector method, redirect to MessageCollector->add  
         if (in_array($method, ['table', 'info', 'warning', 'error', 'log', 'success'])) {
             $collector = $this->collectorMan->get('MessageCollector');

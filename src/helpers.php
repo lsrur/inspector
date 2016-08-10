@@ -11,7 +11,6 @@ if (!function_exists('li')) {
     
     function li($value = null)
     {
-        if(! app('Inspector')->isOn() ) return;
         return app('Inspector');
     }
 }; 
