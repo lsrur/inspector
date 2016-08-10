@@ -1,4 +1,9 @@
 # Laravel Inspector
+[![Total Downloads](https://poser.pugx.org/lsrur/inspector/d/total.svg)](https://packagist.org/packages/lsrur/inspector)
+[![Latest Stable Version](https://poser.pugx.org/lsrur/inspector/v/stable.svg)](https://packagist.org/packages/lsrur/inspector)
+[![Latest Unstable Version](https://poser.pugx.org/lsrur/inspector/v/unstable.svg)](https://packagist.org/packages/lsrur/inspector)
+[![License](https://poser.pugx.org/lsrur/inspector/license.svg)](https://packagist.org/packages/lsrur/inspector)
+
 
 * [At a Glance](#glance)
 * [Installation](#installation)
