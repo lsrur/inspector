@@ -10,15 +10,17 @@
 				<td><strong>Middleware</strong></td>
 			</tr>
 		</thead>
-		@foreach($collectors['Routes']['items'] as $route)
-		<tr>
-			<td>{{$route['method']}}</td>
-			<td>{{$route['uri']}}</td>
-			<td>{{$route['name']}}</td>
-			<td>{{$route['action']}}</td>
-			<td>{{$route['middleware']}}</td>
-		</tr>
-		@endforeach
+		@if (isset($collectors['Routes']) && isset($collectors['Routes']['items']) )
+			@foreach($collectors['Routes']['items'] as $route)
+			<tr>
+				<td>{{$route['method']}}</td>
+				<td>{{$route['uri']}}</td>
+				<td>{{$route['name']}}</td>
+				<td>{{$route['action']}}</td>
+				<td>{{$route['middleware']}}</td>
+			</tr>
+			@endforeach
+		@endif
 	</table> 
 
 </div>
