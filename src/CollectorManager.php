@@ -23,8 +23,6 @@ class CollectorManager
 			'ResponseCollector'		=> ['inspector'=>true, 'fullscreen'=>true],
 			'RoutesCollector'		=> ['inspector'=>false, 'fullscreen'=>true],
 			'TimerCollector'		=> ['inspector'=>true, 'fullscreen'=>true],
-			'PHPInfoCollector'		=> ['inspector'=>false, 'fullscreen'=>true],
-			'LogsCollector'			=> ['inspector'=>false, 'fullscreen'=>true],
 			], \Config::get('inspector.collectors',[]));
 
 		$this->collectors = collect($availabelCollectors)->map(function($item, $key){
