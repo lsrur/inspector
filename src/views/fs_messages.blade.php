@@ -27,6 +27,30 @@
                         @if(in_array($item['style'], ['info', 'warning', 'error', 'success']))
                             <span class="label label-{{$panelStyle}}" style="position:relative; top:-1px">{{strtoupper($item['style'])}}</span>
                         @endif  
+                        @if(is_object($item['value']))
+                            <span class="pull-right">
+                                <?php
+                                    $class = ''; $url='';
+                                    if(starts_with(get_class($item['value']), 'Illuminate'))
+                                    {    
+                                        $class = get_class($item['value']);
+                                    } else {
+                                        $class = inspector()->getIlluminateAncestor($item['value']); 
+                                    }
+                                    if($class != '')
+                                    {
+                                        $url = str_replace("\\", "/",$class).'.html'; 
+                                        $ver = substr(app()->version(),0,3);
+                                        $url = "https://laravel.com/api/$ver/".$url;
+                                    }
+                                    ?>
+                                    @if($url!='')
+                                        <a href="{{$url}}" target="_blank"><strong>{{ get_class($item['value'])}}</strong></a>                            
+                                    @else
+                                        <strong>{{ get_class($item['value'])}}</strong>
+                                    @endif
+                            </span>
+                        @endif
                     </div>
                     <div class="panel-body">
                         @if(isset($item['value']))
@@ -34,6 +58,7 @@
                                 @include("inspector::fs_table",['data'=>$item['value']])
                             @else
                                 {!!inspector()->getDump($item['value'])!!}
+                           
                             @endif
                         @endif
                     </div>

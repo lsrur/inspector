@@ -29,7 +29,7 @@ class CollectorManager
 			$class = "\\Lsrur\Inspector\\Collectors\\".$key;
 			if(class_exists( $class ))
 			{
-				// Extract public methods starting with underscore from collector classes
+				// Extract public methods starting with 'b_' from collector classes
 				collect(get_class_methods($class))->each(function($item) use($key){
 					if(strpos($item,'b_')===0)
 						$this->collectorMethods[substr($item,2)]= $key;

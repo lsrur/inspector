@@ -96,17 +96,16 @@ abstract class BaseCollector
                     $src[] = '<?php'.PHP_EOL;
                     while (($line = fgets($handle)) !== false) 
                     {
+                        $line = str_replace("\r\n", "\n", $line);
+                        $line = str_replace("\r", "\n", $line);
                         $i++; 
                         if($i>=$fromLine && $i<=$toLine)
                         {     
-                            $txt .= $i.':'.substr($line,0,-1).PHP_EOL;
+                            $txt .= $i.':'.$line;
                             if($i == $files[$j]['line'])
                             {
-
                                 $src [] = '-@'.$i.':'.substr($line,0,-1).'@-';
-                                //$src [] = '-@'.$i.':'.$line.'@-';
-                            } else {
-                  
+                            } else {                  
                                 $src [] = $i.':'.$line;
                             }
                         }

@@ -5,9 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, shrink-to-fit=no, initial-scale=1">
     <title>Laravel Inspector</title>
-    	@include("inspector::fs_vendor")
-<link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.5.0/styles/default.min.css">
-<script src="//cdn.jsdelivr.net/highlight.js/9.5.0/highlight.min.js"></script>
+    @include("inspector::fs_vendor")
     <style type="text/css">
     pre {
         border-radius: 0;

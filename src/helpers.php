@@ -11,7 +11,11 @@ if (!function_exists('li')) {
     
     function li($value = null)
     {
-        return app('Inspector');
+        $inspector = app('Inspector');
+        if(isset($value))
+            $inspector->info($value);
+        
+        return $inspector;;
     }
 }; 
 

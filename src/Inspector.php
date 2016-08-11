@@ -129,7 +129,6 @@ class inspector
             array_unshift($args, $method);
             $method = 'add';
         } elseif ($collector = $this->collectorMan->getMethod($method)) {
-
             $method = 'b_'.$method;
         } else {
             die("Method $method not found in collector classes");
@@ -257,4 +256,19 @@ class inspector
 
         return $result;
     }
+
+    public function getIlluminateAncestor($obj)
+    {
+        $result = '';
+        $ancestors = get_ancestors(get_class($obj));
+        foreach ($ancestors as $value) {
+            if(starts_with($value, 'Illuminate')) {
+                $result = $value;   
+                break;
+            }
+        }
+        return $result;
+
+    }
+
 }
