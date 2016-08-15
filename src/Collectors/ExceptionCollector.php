@@ -102,6 +102,11 @@ class ExceptionCollector extends BaseCollector
             ends_with($exception->getFile(), 'FormRequest.php')) {
             return;
         }
+
+        if(get_class($exception) == 'Illuminate\Foundation\Validation\ValidationException' &&
+            ends_with($exception->getFile(), 'ValidatesRequests.php')) {
+            return;
+        }
         
         $this->handleException($exception, false);
 
