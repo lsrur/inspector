@@ -15,7 +15,7 @@ if (!function_exists('li')) {
         if(isset($value))
             $inspector->info($value);
         
-        return $inspector;;
+        return $inspector;
     }
 }; 
 
