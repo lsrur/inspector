@@ -183,7 +183,7 @@ In addition to the ability to group information, each group and subgroup excecut
 Examples:
 
 ```php	
-li()->timer("MyTimer");
+li()->time("MyTimer");
 // ...
 li()->timeEnd("MyTimer");
 	
