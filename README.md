@@ -81,11 +81,11 @@ And this Facade in the same configuration file:
 In order to use Inspector as the default exceptions renderer, add the following line in the file `app/Exceptions/Handler.php` of your Laravel project:
 
 ```php    
-public function render($request, Exception $e)
+public function render($request, Exception $exception)
 {
-    \Inspector::renderException($e); 	// <= THIS LINE
-    return parent::render($request, $e);
-}  
+    \Inspector::renderException($exception);	// <= THIS LINE
+    return parent::render($request, $exception);
+}
 ```      
 
   
