@@ -209,7 +209,7 @@ class inspector
                 $content = $response->getContent();
                 // Ensure string content
                 if (is_string($content)) {
-                    $content = str_replace('</body>', $inspectionBag, $response->getContent());
+                    $content = str_replace('</body>', $inspectionBag.'</body>', $response->getContent());
                     $response->setContent($content);
                 }
                 break;
