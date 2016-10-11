@@ -55,7 +55,7 @@
 [comment]:$  
 ## <a name="installation"></a>Installation
 
-**This package was tested under PHP 5.6, PHP 7, Laravel 5.2 and Laravel 5.3-Dev** 
+**This package was tested under PHP 5.6, PHP 7, Laravel 5.2 and Laravel 5.3-Dev**
 
 Installing the package via composer:
 
@@ -68,13 +68,26 @@ Next, add InspectorServiceProvider to the providers array in `config/app.php`:
 ```php
 Lsrur\Inspector\InspectorServiceProvider::class,
 ```
-  
+
 And this Facade in the same configuration file:
 
 ```php
 'Inspector' => Lsrur\Inspector\Facade\Inspector::class,
 ```
 
+For usage only during development and not during production,
+do **not** edit the `config/app.php` and add the following to your `AppServiceProvider` :
+
+```php
+public function register()
+{
+  // ...
+  if ($this->app->environment() == 'development') {
+      $this->app->register(\Lsrur\Inspector\InspectorServiceProvider::class);
+  }
+  // ...
+}
+```
 
 ## <a name="configuration"></a>Configuration
 
@@ -88,7 +101,7 @@ public function render($request, Exception $exception)
 }
 ```      
 
-  
+
 ## <a name="usage"></a>Usage
 Laravel inspector can be invoked using the Facade, the provided helper functions and a Blade directive:
 
@@ -96,31 +109,31 @@ Laravel inspector can be invoked using the Facade, the provided helper functions
 //Using Facade
 \Inspector::log(...);
 \Inspector::info(...);
-		
+
 //Using the "inspector" helper function
 inspector()->info(...);
 inspector()->warning($myVar);
-	
+
 // "li" is an alias of "inspector"
 li()->error(...);
 li()->group('myGroup');
-	
+
 // "inspect" function makes an "Inspector::log($v)" for each passed argument
 inspect($var1, $var2, $var3, ...);
-	
+
 // Dump and die using Laravel Inspector magic
 idd();
 idd($var1, $var2);
-	
+
 // Inside Blade
 @li(cmd,param1,param2,...)
-	
+
 // samples
 @li('log', 'My comment', $myVar)
 @li(log, 'My comment', $myVar) //also works without command quotes
 @li(group,"myGroup")
 @li(endGroup)
-```	
+```
 
 **Laravel inspector will only be active if the config variable `app.debug` is true.**  
 Anyway, you can temporarily turn Inspector off (just for the current request) with:
@@ -145,21 +158,21 @@ You can inspect objects and variables with the following methods, each of which 
 
 Examples:
 
-```php	
+```php
 li()->log("MyData", $myData);
 li()->info($myData);
-li()->table("clients", $myClientsCollection); 
+li()->table("clients", $myClientsCollection);
 ```
 Additionally, you can use the "inspect" helper function to quickly inspect objects and variables.
 
-```php	
+```php
 inspect($var1, $var2, $var3,...);
 ```
 
 #### Grouping Messages
 Laravel Inspector allows you to group messages into nodes and subnodes:
 
-```php	
+```php
 li()->group('MyGroup');
 	li()->info($data);
 	li()->group('MySubGroup');
@@ -182,12 +195,12 @@ In addition to the ability to group information, each group and subgroup excecut
 
 Examples:
 
-```php	
+```php
 li()->time("MyTimer");
 // ...
 li()->timeEnd("MyTimer");
-	
-li()->timeStamp('Elapsed time from LARAVEL_START here'); 
+
+li()->timeStamp('Elapsed time from LARAVEL_START here');
 ```
 
 ## <a name="redirects"></a>Redirects
@@ -195,32 +208,32 @@ Laravel Inspector handles redirects smoothly; showing the collectors bag for bot
 
 ## <a name="dump"></a>Dump and die
 
-The <code>dd()</code> method (or <code>idd()</code> helper) will dump the entire collectors bag and terminates the script: 
+The <code>dd()</code> method (or <code>idd()</code> helper) will dump the entire collectors bag and terminates the script:
 
-```php	
+```php
 \Inspector::dd();
 li()->dd();
-	
+
 // or simply
 idd();
-	
+
 // adding last minute data
 idd($var1, $var2,...)
 ```
 
-As the rest of the package, this feature intelligently determines how will be the format of the output, even if the call was performed from CLI. 
+As the rest of the package, this feature intelligently determines how will be the format of the output, even if the call was performed from CLI.
 
 Another way to make an inspection, but without interrupting the flow of the request/response, is by adding the parameter <code>laravel_inspector=dump</code> to the URL:
-  
+
 <code>http://myapp.dev/contacts?id=1&laravel_inspector=dump</code>
- 
+
 Thus, Laravel Inspector wont be activated until the a terminable middleware is reached.
 
 ## <a name="exceptions"></a>Exceptions
 
 The function <code>addException()</code> will inspect our caught exceptions:  
 
-```php	
+```php
 try {
 	...
 } catch (Exception $e) {
@@ -228,10 +241,10 @@ try {
 }
 ```
 
-Optionally, you can setup LI as the default exception renderer during development time (app.debug=true). Refer to the [configuration](#configuration) to do so. 
+Optionally, you can setup LI as the default exception renderer during development time (app.debug=true). Refer to the [configuration](#configuration) to do so.
 
-## <a name="requests"></a>VIEW/AJAX/API requests, how it works 
- 
+## <a name="requests"></a>VIEW/AJAX/API requests, how it works
+
 Laravel Inspector (LI) automatically detects the type of the request/response pair and determines the output format. If a View response is detected, the code needed to elegantly show the collected information in the browser console will be injected as a javascript into that view. Along with this, LI will also add a small piece of pure javascript code that serves as a generic http interceptor, which will examine subsequent AJAX calls looking for information injected by LI
 (this interceptor was tested under pure javascript, Angular 1.x ($http) and jQuery ($.ajax) and should work with any js framework). The interceptor also adds a header in each client AJAX call to let LI  know that the interceptor is present. Then, from Laravel side, during an AJAX request or a JSON response, LI will send a script to be interpreted (and properly rendered in the browsers console) by the interceptor, OR a pure Json if that header is not present and then assuming that the request was sent from cURL, a REST client app or something else.
 
@@ -268,7 +281,7 @@ XHR.prototype.send = function(data) {
 		if(this.addEventListener) {
 			this.addEventListener("readystatechange", onReadyStateChange, false);
 		} else {
-			oldOnReadyStateChange = this.onreadystatechange; 
+			oldOnReadyStateChange = this.onreadystatechange;
 			this.onreadystatechange = onReadyStateChange;
 		}
 	}
@@ -276,8 +289,8 @@ XHR.prototype.send = function(data) {
 }
 })(XMLHttpRequest);
 ```
- 
+
 [comment]: $
-    
+
 ## <a name="license"></a>License
 Laravel Inspector is licensed under the [MIT License](https://opensource.org/licenses/MIT).
