@@ -35,7 +35,7 @@
 
 |[![](https://s31.postimg.org/7be16rknv/image.png)](https://s31.postimg.org/inqmojtcp/image.png)|[![](https://s31.postimg.org/nqy57iynf/image.png)](https://s31.postimg.org/gayvlqay1/image.png)|
 |:-:|:-:|
-|Using Postman REST client app|<code>laravel_ispector=dump</code> parameter|
+|Using Postman REST client app|<code>laravel_inspector=dump</code> parameter|
 
 
 |Available Collectors|Information about|
