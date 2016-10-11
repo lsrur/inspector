@@ -101,6 +101,17 @@ public function render($request, Exception $exception)
 }
 ```      
 
+For usage only during development:
+```
+public function render($request, Exception $exception)
+{
+    if (\App::environment() == 'development')
+    {
+        \Lsrur\Inspector\Facade\Inspector::renderException($exception);
+    }
+    return parent::render($request, $exception);
+}
+```
 
 ## <a name="usage"></a>Usage
 Laravel inspector can be invoked using the Facade, the provided helper functions and a Blade directive:
