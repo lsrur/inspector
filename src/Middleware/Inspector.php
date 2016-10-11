@@ -14,20 +14,20 @@ class Inspector
         } catch (Exception $e) {
             $response = $this->handleException($request, $e);
         }
-        
-        if(\Inspector::isOn())
-	    {
+
+        if(\Lsrur\Inspector\Facade\Inspector::isOn())
+        {
             if($request->get('laravel_inspector')=='dd')
             {
-                \inspector::dd();
+                \Lsrur\Inspector\Facade\Inspector::dd();
             } elseif($request->get('laravel_inspector')=='off') {
                 // do nothing
             } elseif($request->get('laravel_inspector')=='dump') {
-                
-                \inspector::analize($request, $response);
+
+                \Lsrur\Inspector\Facade\Inspector::analize($request, $response);
 
             } else {
-                \Inspector::injectInspection($request, $response);                
+                \Lsrur\Inspector\Facade\Inspector::injectInspection($request, $response);
             }
         }
         return $response;
