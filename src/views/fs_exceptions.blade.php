@@ -7,7 +7,7 @@ $exceptions = $collectors['Exceptions']['items'];$counter=1;
 			<div class="col-lg-12">
 				@if($counter>1)
 					<div style="height: 20px; ">&nbsp;</div>
-				@endif  
+				@endif
 				<div>
 					<div style="margin-left: 0px; border: 1px solid #ddd; padding:10px;box-shadow: 0px 0px 2px #ccc;">
 						<h4 style="padding-bottom:0px; margin: 0px">
@@ -28,7 +28,7 @@ $exceptions = $collectors['Exceptions']['items'];$counter=1;
 							@endif
 						</h3>
 						@foreach($exception['files'] as $file)
-							<h4>{{ $file['fileName']}} #{{$file['line'] }}
+							<h4>{{ isset($file['fileName']) ? $file['fileName'] : $file['file'] }} #{{$file['line'] }}
 								@if(isset($file['tag']) && $file['tag']=='my code')
 									<span style="margin-left:5px;font-size:11px;position: relative; top: -2px" class="label label-danger">MY CODE</span>
 								@endif
@@ -36,20 +36,20 @@ $exceptions = $collectors['Exceptions']['items'];$counter=1;
 									<span style="margin-left:5px;font-size:11px;position: relative; top: -2px" class="label label-warning">VENDOR</span>
 								@endif
 							</h4>
-							@if($file['src'] != '')
+							@if(isset($file['src']) && $file['src'] != '')
 								<pre>{!! $file['src'] !!}</pre>
 							@endif
 						@endforeach
 						<h5><a href='javascript:void(0)' class="trace-link" style="text-decoration: none" id="{{$counter}}">FULL TRACE...</a></h5>
 						<div style="display: none" id='trace-panel-{{$counter}}'>
-							@foreach($exception['trace'] as $item)		
+							@foreach($exception['trace'] as $item)
 								<div style="padding:  7px 0px; border-top: 1px solid #ddd">
 								@if(isset($item['file']))
 									<h5>File: <code>{{$item['file']}} #{{$item['line']}}</code></h5>
 								@endif
 								<h5>Function: <code>{{$item['function'] or ''}}</code></h5>
 								@if(isset($item['class']))
-									<h5>Class: <code>{{$item['class'] or ''}}</code></h5>	
+									<h5>Class: <code>{{$item['class'] or ''}}</code></h5>
 								@endif
 								</div>
 							@endforeach
@@ -58,7 +58,7 @@ $exceptions = $collectors['Exceptions']['items'];$counter=1;
 				</div>
 			</div>
 			<?php $counter++;?>
-		@endforeach	
+		@endforeach
 	</div>
 </div>
 <script type="text/javascript">
