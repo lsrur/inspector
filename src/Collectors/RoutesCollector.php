@@ -22,10 +22,10 @@ class RoutesCollector extends BaseCollector
 			$name = isset($route->getAction()['as']) ? $route->getAction()['as'] : '';
 			
 			$this->routes[] = [
-				'method'=> implode('|',$route->getMethods()),
+				'method'=> implode('|',$route->methods()),
 				'name'	=> $name,
 				'action'=> $action,
-				'uri'	=> $route->getUri(),
+				'uri'	=> $route->uri(),
 				'middleware' => isset($route->getAction()['middleware']) && is_array($route->getAction()['middleware']) ?
 					implode(',',$route->getAction()['middleware']) : (isset($route->getAction()['middleware']) ? $route->getAction()['middleware'] : '')
 				];
